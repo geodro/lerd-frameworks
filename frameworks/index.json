@@ -1,0 +1,63 @@
+{
+  "frameworks": [
+    {
+      "name": "laravel",
+      "label": "Laravel",
+      "versions": ["13", "12"],
+      "latest": "13",
+      "detect": [
+        {"file": "artisan"},
+        {"composer": "laravel/framework"}
+      ]
+    },
+    {
+      "name": "symfony",
+      "label": "Symfony",
+      "versions": ["8", "7"],
+      "latest": "8",
+      "detect": [
+        {"file": "symfony.lock"},
+        {"composer": "symfony/framework-bundle"}
+      ]
+    },
+    {
+      "name": "wordpress",
+      "label": "WordPress",
+      "versions": ["6", "5"],
+      "latest": "6",
+      "detect": [
+        {"file": "wp-login.php"},
+        {"file": "wp-config.php"}
+      ]
+    },
+    {
+      "name": "drupal",
+      "label": "Drupal",
+      "versions": ["11", "10"],
+      "latest": "11",
+      "detect": [
+        {"composer": "drupal/core-recommended"},
+        {"composer": "drupal/core"}
+      ]
+    },
+    {
+      "name": "cakephp",
+      "label": "CakePHP",
+      "versions": ["5", "4"],
+      "latest": "5",
+      "detect": [
+        {"file": "bin/cake"},
+        {"composer": "cakephp/cakephp"}
+      ]
+    },
+    {
+      "name": "statamic",
+      "label": "Statamic",
+      "versions": ["6", "5"],
+      "latest": "6",
+      "detect": [
+        {"composer": "statamic/cms"}
+      ]
+    }
+  ]
+}

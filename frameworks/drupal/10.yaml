@@ -1,0 +1,80 @@
+name: drupal
+version: "10"
+label: Drupal
+public_dir: web
+create: composer create-project drupal/recommended-project
+
+detect:
+  - composer: drupal/core-recommended
+  - composer: drupal/core
+
+env:
+  file: .env
+  format: dotenv
+  url_key: DRUPAL_BASE_URL
+  services:
+    mysql:
+      detect:
+        - key: DB_DRIVER
+          value_prefix: mysql
+      vars:
+        - DB_DRIVER=mysql
+        - DB_HOST=lerd-mysql
+        - DB_PORT=3306
+        - DB_NAME={{site}}
+        - DB_USER=root
+        - DB_PASSWORD=lerd
+    postgres:
+      detect:
+        - key: DB_DRIVER
+          value_prefix: pgsql
+      vars:
+        - DB_DRIVER=pgsql
+        - DB_HOST=lerd-postgres
+        - DB_PORT=5432
+        - DB_NAME={{site}}
+        - DB_USER=postgres
+        - DB_PASSWORD=lerd
+    redis:
+      detect:
+        - key: REDIS_HOST
+      vars:
+        - REDIS_HOST=lerd-redis
+        - REDIS_PORT=6379
+    mailpit:
+      detect:
+        - key: SMTP_HOST
+      vars:
+        - SMTP_HOST=lerd-mailpit
+        - SMTP_PORT=1025
+
+composer: auto
+npm: false
+
+workers:
+  cron:
+    label: Cron
+    command: php vendor/bin/drush cron
+    restart: always
+    check:
+      composer: drush/drush
+
+setup:
+  - label: Install site
+    command: php vendor/bin/drush site:install --yes
+    check:
+      composer: drush/drush
+  - label: Run database updates
+    command: php vendor/bin/drush updatedb --yes
+    default: true
+    check:
+      composer: drush/drush
+  - label: Rebuild cache
+    command: php vendor/bin/drush cache:rebuild
+    default: true
+    check:
+      composer: drush/drush
+  - label: Import config
+    command: php vendor/bin/drush config:import --yes
+    check:
+      composer: drush/drush

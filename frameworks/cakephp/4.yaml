@@ -1,0 +1,50 @@
+name: cakephp
+version: "4"
+label: CakePHP
+public_dir: webroot
+create: composer create-project cakephp/app
+
+detect:
+  - file: bin/cake
+  - composer: cakephp/cakephp
+
+env:
+  file: config/app_local.php
+  format: php-const
+  url_key: APP_URL
+  services:
+    mysql:
+      detect:
+        - key: DATABASE_URL
+          value_prefix: "mysql://"
+      vars:
+        - "DATABASE_URL=mysql://root:lerd@lerd-mysql:3306/{{site}}"
+    postgres:
+      detect:
+        - key: DATABASE_URL
+          value_prefix: "postgres://"
+      vars:
+        - "DATABASE_URL=postgres://postgres:lerd@lerd-postgres:5432/{{site}}"
+    redis:
+      detect:
+        - key: CACHE_URL
+          value_prefix: "redis://"
+      vars:
+        - "CACHE_URL=redis://lerd-redis:6379"
+    mailpit:
+      detect:
+        - key: EMAIL_TRANSPORT_DEFAULT_URL
+      vars:
+        - "EMAIL_TRANSPORT_DEFAULT_URL=smtp://lerd-mailpit:1025"
+
+composer: auto
+npm: auto
+console: bin/cake
+
+setup:
+  - label: Run migrations
+    command: bin/cake migrations migrate
+    default: true
+  - label: Clear cache
+    command: bin/cake cache clear_all
+    default: true

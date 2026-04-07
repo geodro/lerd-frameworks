@@ -1,0 +1,25 @@
+name: wordpress
+version: "6"
+label: WordPress
+public_dir: .
+
+detect:
+  - file: wp-login.php
+  - file: wp-config.php
+
+env:
+  fallback_file: wp-config.php
+  fallback_format: php-const
+  url_key: WP_HOME
+  services:
+    mysql:
+      detect:
+        - key: DB_HOST
+      vars:
+        - DB_NAME={{site}}
+        - DB_USER=root
+        - DB_PASSWORD=lerd
+        - DB_HOST=lerd-mysql
+
+composer: false
+npm: false
