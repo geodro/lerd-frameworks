@@ -9,8 +9,8 @@ detect:
   - composer: symfony/framework-bundle
 
 env:
-  file: .env
-  example_file: .env.dist
+  file: .env.local
+  example_file: .env
   format: dotenv
   url_key: DEFAULT_URI
   services:

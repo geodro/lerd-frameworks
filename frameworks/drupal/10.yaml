@@ -13,7 +13,6 @@ env:
   format: dotenv
   fallback_file: web/sites/default/settings.php
   fallback_format: php-const
-  url_key: DRUPAL_BASE_URL
   services:
     mysql:
       detect:

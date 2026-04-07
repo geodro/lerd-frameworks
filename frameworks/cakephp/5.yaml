@@ -9,8 +9,9 @@ detect:
   - composer: cakephp/cakephp
 
 env:
-  file: config/app_local.php
-  format: php-const
+  file: config/.env
+  example_file: config/.env.example
+  format: dotenv
   url_key: APP_URL
   services:
     mysql:
