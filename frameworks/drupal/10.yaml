@@ -11,11 +11,15 @@ detect:
 env:
   file: .env
   format: dotenv
+  fallback_file: web/sites/default/settings.php
+  fallback_format: php-const
   url_key: DRUPAL_BASE_URL
   services:
     mysql:
       detect:
         - key: DB_DRIVER
+          value_prefix: mysql
+        - key: database
           value_prefix: mysql
       vars:
         - DB_DRIVER=mysql
@@ -27,6 +31,8 @@ env:
     postgres:
       detect:
         - key: DB_DRIVER
+          value_prefix: pgsql
+        - key: database
           value_prefix: pgsql
       vars:
         - DB_DRIVER=pgsql
