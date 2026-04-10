@@ -4,6 +4,10 @@ label: Laravel
 public_dir: public
 create: composer create-project --no-install --no-plugins --no-scripts laravel/laravel
 
+php:
+  min: "8.2"
+  max: "8.5"
+
 detect:
   - file: artisan
   - composer: laravel/framework
@@ -115,6 +119,10 @@ workers:
       composer: laravel/horizon
     conflicts_with:
       - queue
+
+logs:
+  - path: storage/logs/*.log
+    format: monolog
 
 setup:
   - label: php artisan storage:link

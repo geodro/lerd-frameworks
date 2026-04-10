@@ -3,6 +3,9 @@ version: "5"
 label: Statamic
 public_dir: public
 create: composer create-project statamic/statamic
+php:
+  min: "8.2"
+  max: "8.4"
 
 detect:
   - composer: statamic/cms
@@ -69,6 +72,10 @@ workers:
     label: Task Scheduler
     command: php artisan schedule:work
     restart: always
+
+logs:
+  - path: storage/logs/*.log
+    format: monolog
 
 setup:
   - label: php artisan storage:link

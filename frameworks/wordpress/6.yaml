@@ -2,6 +2,9 @@ name: wordpress
 version: "6"
 label: WordPress
 public_dir: .
+php:
+  min: "7.4"
+  max: "8.4"
 
 detect:
   - file: wp-login.php
@@ -20,6 +23,10 @@ env:
         - DB_USER=root
         - DB_PASSWORD=lerd
         - DB_HOST=lerd-mysql
+
+logs:
+  - path: wp-content/debug.log
+    format: raw
 
 composer: false
 npm: false

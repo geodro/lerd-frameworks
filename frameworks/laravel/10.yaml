@@ -1,14 +1,16 @@
-name: statamic
-version: "6"
-label: Statamic
+name: laravel
+version: "10"
+label: Laravel
 public_dir: public
-create: composer create-project statamic/statamic
+create: composer create-project --no-install --no-plugins --no-scripts laravel/laravel
+
 php:
-  min: "8.3"
-  max: "8.5"
+  min: "8.1"
+  max: "8.3"
 
 detect:
-  - composer: statamic/cms
+  - file: artisan
+  - composer: laravel/framework
 
 env:
   file: .env
@@ -23,6 +25,8 @@ env:
       detect:
         - key: DB_CONNECTION
           value_prefix: mysql
+        - key: DB_CONNECTION
+          value_prefix: mariadb
       vars:
         - DB_CONNECTION=mysql
         - DB_HOST=lerd-mysql
@@ -44,10 +48,35 @@ env:
     redis:
       detect:
         - key: REDIS_HOST
+        - key: CACHE_DRIVER
+          value_prefix: redis
+        - key: SESSION_DRIVER
+          value_prefix: redis
+        - key: QUEUE_CONNECTION
+          value_prefix: redis
       vars:
         - REDIS_HOST=lerd-redis
         - REDIS_PORT=6379
         - REDIS_PASSWORD=
+    meilisearch:
+      detect:
+        - key: SCOUT_DRIVER
+          value_prefix: meilisearch
+      vars:
+        - MEILISEARCH_HOST=http://lerd-meilisearch:7700
+        - MEILISEARCH_NO_ANALYTICS=true
+    rustfs:
+      detect:
+        - key: FILESYSTEM_DISK
+          value_prefix: s3
+        - key: AWS_ENDPOINT
+      vars:
+        - AWS_ACCESS_KEY_ID=lerd
+        - AWS_SECRET_ACCESS_KEY=lerdpassword
+        - AWS_BUCKET={{site}}
+        - AWS_ENDPOINT=http://lerd-rustfs:9000
+        - AWS_URL=http://localhost:9000/{{site}}
+        - AWS_USE_PATH_STYLE_ENDPOINT=true
     mailpit:
       detect:
         - key: MAIL_HOST
@@ -70,8 +99,16 @@ workers:
     restart: always
   schedule:
     label: Task Scheduler
-    command: php artisan schedule:work
+    command: php artisan schedule:run
     restart: always
+  horizon:
+    label: Horizon
+    command: php artisan horizon
+    restart: always
+    check:
+      composer: laravel/horizon
+    conflicts_with:
+      - queue
 
 logs:
   - path: storage/logs/*.log
@@ -81,9 +118,9 @@ setup:
   - label: php artisan storage:link
     command: php artisan storage:link
     default: true
-  - label: php please install
-    command: php please install
+  - label: php artisan migrate
+    command: php artisan migrate
     default: true
-  - label: Refresh stache
-    command: php please stache:refresh
-    default: true
+  - label: php artisan db:seed
+    command: php artisan db:seed
+    default: false

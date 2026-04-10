@@ -3,6 +3,9 @@ version: "7"
 label: Symfony
 public_dir: public
 create: composer create-project symfony/skeleton
+php:
+  min: "8.2"
+  max: "8.4"
 
 detect:
   - file: symfony.lock
@@ -59,6 +62,10 @@ workers:
     restart: always
     check:
       composer: symfony/messenger
+
+logs:
+  - path: var/log/*.log
+    format: monolog
 
 setup:
   - label: Run migrations

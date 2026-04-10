@@ -3,7 +3,7 @@
     {
       "name": "laravel",
       "label": "Laravel",
-      "versions": ["13", "12"],
+      "versions": ["13", "12", "11", "10"],
       "latest": "13",
       "detect": [
         {"file": "artisan"},

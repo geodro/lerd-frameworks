@@ -3,6 +3,9 @@ version: "10"
 label: Drupal
 public_dir: web
 create: composer create-project drupal/recommended-project
+php:
+  min: "8.1"
+  max: "8.4"
 
 detect:
   - composer: drupal/core-recommended

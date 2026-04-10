@@ -3,6 +3,9 @@ version: "5"
 label: CakePHP
 public_dir: webroot
 create: composer create-project cakephp/app
+php:
+  min: "8.1"
+  max: "8.4"
 
 detect:
   - file: bin/cake
@@ -49,6 +52,10 @@ workers:
     restart: always
     check:
       composer: cakephp/queue
+
+logs:
+  - path: logs/*.log
+    format: raw
 
 setup:
   - label: Run migrations

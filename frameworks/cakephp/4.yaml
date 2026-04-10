@@ -3,6 +3,9 @@ version: "4"
 label: CakePHP
 public_dir: webroot
 create: composer create-project cakephp/app
+php:
+  min: "7.4"
+  max: "8.3"
 
 detect:
   - file: bin/cake
@@ -41,6 +44,10 @@ env:
 composer: auto
 npm: auto
 console: bin/cake
+
+logs:
+  - path: logs/*.log
+    format: raw
 
 setup:
   - label: Run migrations
