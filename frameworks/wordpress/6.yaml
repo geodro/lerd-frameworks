@@ -8,6 +8,8 @@ php:
 
 detect:
   - file: wp-login.php
+    version_file: wp-includes/version.php
+    version_pattern: "\\$wp_version\\s*=\\s*'([^']+)'"
   - file: wp-config.php
 
 env:

@@ -26,7 +26,7 @@
       "versions": ["6", "5"],
       "latest": "6",
       "detect": [
-        {"file": "wp-login.php"},
+        {"file": "wp-login.php", "version_file": "wp-includes/version.php", "version_pattern": "\\$wp_version\\s*=\\s*'([^']+)'"},
         {"file": "wp-config.php"}
       ]
     },
