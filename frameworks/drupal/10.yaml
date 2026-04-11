@@ -2,6 +2,7 @@ name: drupal
 version: "10"
 label: Drupal
 public_dir: web
+favicon: core/misc/favicon.ico
 create: composer create-project drupal/recommended-project
 php:
   min: "8.1"
