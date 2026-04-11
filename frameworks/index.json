@@ -17,7 +17,7 @@
       "latest": "8",
       "detect": [
         {"file": "symfony.lock"},
-        {"composer": "symfony/framework-bundle"}
+        {"composer": "symfony/framework-bundle", "composer_sections": ["flex-require"], "version_key": "extra.symfony.require"}
       ]
     },
     {

@@ -10,6 +10,8 @@ php:
 detect:
   - file: symfony.lock
   - composer: symfony/framework-bundle
+    composer_sections: [flex-require]
+    version_key: extra.symfony.require
 
 env:
   file: .env.local
