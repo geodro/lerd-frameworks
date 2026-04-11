@@ -62,27 +62,27 @@ npm: false
 workers:
   cron:
     label: Cron
-    command: php vendor/bin/drush cron
+    command: php vendor/drush/drush/drush.php cron
     restart: always
     check:
       composer: drush/drush
 
 setup:
   - label: Install site
-    command: php vendor/bin/drush site:install --yes
+    command: php vendor/drush/drush/drush.php site:install --yes
     check:
       composer: drush/drush
   - label: Run database updates
-    command: php vendor/bin/drush updatedb --yes
+    command: php vendor/drush/drush/drush.php updatedb --yes
     default: true
     check:
       composer: drush/drush
   - label: Rebuild cache
-    command: php vendor/bin/drush cache:rebuild
+    command: php vendor/drush/drush/drush.php cache:rebuild
     default: true
     check:
       composer: drush/drush
   - label: Import config
-    command: php vendor/bin/drush config:import --yes
+    command: php vendor/drush/drush/drush.php config:import --yes
     check:
       composer: drush/drush
