@@ -100,7 +100,7 @@ workers:
   schedule:
     label: Task Scheduler
     command: php artisan schedule:run
-    restart: always
+    schedule: minutely
   horizon:
     label: Horizon
     command: php artisan horizon
