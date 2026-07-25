@@ -209,6 +209,7 @@ doctor:
       type: command
       command: php artisan migrate:status
       fail_if_output_contains: Pending
+      fail_if_error_contains: Migration table not found
       unknown_on_error: true
       fix: migrate
       detail: "There are pending migrations, run migrate to apply them."
