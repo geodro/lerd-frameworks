@@ -1,0 +1,132 @@
+name: symfony
+version: "5"
+label: Symfony
+public_dir: public
+create: composer create-project symfony/skeleton
+php:
+  min: "7.2"
+  max: "8.2"
+
+detect:
+  - file: symfony.lock
+  - composer: symfony/framework-bundle
+    composer_sections: [flex-require]
+    version_key: extra.symfony.require
+
+env:
+  file: .env.local
+  example_file: .env
+  format: dotenv
+  url_key: DEFAULT_URI
+  # DATABASE_URL carries no serverVersion: Doctrine picks its platform from that
+  # string when it is set, and it cannot be spelled for a drop-in (a MariaDB server
+  # given "11.8" is read as MySQL). Left out, Doctrine asks the server and is right
+  # for every database and version.
+  services:
+    mysql:
+      detect:
+        - key: DATABASE_URL
+          value_prefix: "mysql://"
+        - key: DATABASE_URL
+          value_prefix: "mariadb://"
+      vars:
+        - "DATABASE_URL=mysql://root:lerd@lerd-mysql:3306/{{site}}"
+    postgres:
+      detect:
+        - key: DATABASE_URL
+          value_prefix: "postgresql://"
+        - key: DATABASE_URL
+          value_prefix: "postgres://"
+      vars:
+        - "DATABASE_URL=postgresql://postgres:lerd@lerd-postgres:5432/{{site}}"
+    redis:
+      detect:
+        - key: REDIS_URL
+        - key: REDIS_DSN
+      vars:
+        - "REDIS_URL=redis://lerd-redis:6379"
+    mailpit:
+      detect:
+        - key: MAILER_DSN
+      vars:
+        - "MAILER_DSN=smtp://lerd-mailpit:1025"
+    meilisearch:
+      detect:
+        - key: MEILISEARCH_HOST
+        - key: MEILISEARCH_DSN
+      vars:
+        - "MEILISEARCH_HOST=http://lerd-meilisearch:7700"
+
+composer: auto
+npm: auto
+console: bin/console
+
+workers:
+  messenger:
+    label: Messenger
+    command: php bin/console messenger:consume async --time-limit=3600
+    restart: always
+    check:
+      composer: symfony/messenger
+
+logs:
+  - path: var/log/*.log
+    format: monolog
+
+setup:
+  - label: Run migrations
+    command: php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+    default: true
+    check:
+      composer: doctrine/doctrine-migrations-bundle
+  - label: Load fixtures
+    command: php bin/console doctrine:fixtures:load --no-interaction
+    check:
+      composer: doctrine/doctrine-fixtures-bundle
+  - label: Clear cache
+    command: php bin/console cache:clear
+    default: true
+  - label: Install assets
+    command: php bin/console assets:install public
+    default: true
+
+tinker:
+  command: ["vendor/bin/psysh"]
+  execute_flag: "--execute"
+  requires_package: psy/psysh
+  requires_file: vendor/bin/psysh
+
+commands:
+  - name: cache:clear
+    label: Clear cache
+    command: bin/console cache:clear
+    description: Clear the Symfony cache for the current environment
+    output: silent
+    icon: broom
+  - name: doctrine:migrations:migrate
+    label: Run migrations
+    command: bin/console doctrine:migrations:migrate --no-interaction
+    description: Apply pending Doctrine migrations
+    output: silent
+    icon: database
+    check:
+      composer: doctrine/doctrine-migrations-bundle
+  - name: doctrine:fixtures:load
+    label: Load fixtures
+    command: bin/console doctrine:fixtures:load --no-interaction
+    description: Wipe data and load fixtures
+    output: silent
+    confirm: true
+    icon: refresh
+    check:
+      composer: doctrine/doctrine-fixtures-bundle
+
+doctor:
+  checks:
+    - name: app_debug
+      type: env_combo
+      when:
+        APP_ENV: prod
+      warn_if:
+        APP_DEBUG: "true"
+      detail: "APP_DEBUG is on while APP_ENV=prod, so stack traces and internals will leak. Turn debug off in production."

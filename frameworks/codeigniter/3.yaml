@@ -1,0 +1,32 @@
+name: codeigniter
+version: "3"
+label: CodeIgniter
+public_dir: .
+create: composer create-project codeigniter/framework
+
+php:
+  min: "7.2"
+  max: "7.4"
+
+# CodeIgniter 3 has no spark CLI and no composer entry of its own in most
+# projects, so it is recognised by the framework directory the installer lays
+# down next to the front controller.
+detect:
+  - file: system/core/CodeIgniter.php
+  - composer: codeigniter/framework
+
+# Configuration lives in PHP files under application/config rather than a
+# dotenv file, so there is nothing for lerd to write connection values into.
+env:
+  file: ""
+  format: none
+
+composer: auto
+npm: false
+
+# No console: CodeIgniter 3 ships no CLI runner, so there are no workers, no
+# setup commands and no tinker.
+
+logs:
+  - path: application/logs/log-*.php
+    format: plain

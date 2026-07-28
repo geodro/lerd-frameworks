@@ -1,0 +1,80 @@
+name: cakephp
+version: "3"
+label: CakePHP
+public_dir: webroot
+create: composer create-project cakephp/app
+php:
+  min: "7.2"
+  max: "7.4"
+
+detect:
+  - file: bin/cake
+  - composer: cakephp/cakephp
+
+env:
+  file: config/.env
+  example_file: config/.env.example
+  format: dotenv
+  url_key: APP_URL
+  services:
+    mysql:
+      detect:
+        - key: DATABASE_URL
+          value_prefix: "mysql://"
+      vars:
+        - "DATABASE_URL=mysql://root:lerd@lerd-mysql:3306/{{site}}"
+    postgres:
+      detect:
+        - key: DATABASE_URL
+          value_prefix: "postgres://"
+      vars:
+        - "DATABASE_URL=postgres://postgres:lerd@lerd-postgres:5432/{{site}}"
+    redis:
+      detect:
+        - key: CACHE_URL
+          value_prefix: "redis://"
+      vars:
+        - "CACHE_URL=redis://lerd-redis:6379"
+    mailpit:
+      detect:
+        - key: EMAIL_TRANSPORT_DEFAULT_URL
+      vars:
+        - "EMAIL_TRANSPORT_DEFAULT_URL=smtp://lerd-mailpit:1025"
+
+composer: auto
+npm: auto
+console: bin/cake
+
+logs:
+  - path: logs/*.log
+    format: raw
+
+setup:
+  - label: Run migrations
+    command: bin/cake migrations migrate
+    default: true
+  - label: Clear cache
+    command: bin/cake cache clear_all
+    default: true
+
+commands:
+  - name: cache:clear
+    label: Clear all caches
+    command: bin/cake cache clear_all
+    description: Clear every configured cache pool
+    output: silent
+    icon: broom
+  - name: migrate
+    label: Run migrations
+    command: bin/cake migrations migrate
+    description: Apply pending migrations
+    output: silent
+    icon: database
+    check:
+      composer: cakephp/migrations
+  - name: schema:cache:clear
+    label: Clear schema cache
+    command: bin/cake schema_cache clear
+    description: Drop the cached database schema
+    output: silent
+    icon: refresh
