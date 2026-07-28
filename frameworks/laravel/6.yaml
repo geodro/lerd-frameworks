@@ -1,0 +1,194 @@
+name: laravel
+version: "6"
+label: Laravel
+public_dir: public
+create: composer create-project --no-install --no-plugins --no-scripts laravel/laravel
+
+php:
+  min: "7.2"
+  max: "8.0"
+
+detect:
+  - file: artisan
+  - composer: laravel/framework
+
+env:
+  file: .env
+  example_file: .env.example
+  format: dotenv
+  key_generation:
+    env_key: APP_KEY
+    command: key:generate
+    fallback_prefix: "base64:"
+  services:
+    mysql:
+      detect:
+        - key: DB_CONNECTION
+          value_prefix: mysql
+        - key: DB_CONNECTION
+          value_prefix: mariadb
+      vars:
+        - DB_CONNECTION=mysql
+        - DB_HOST=lerd-mysql
+        - DB_PORT=3306
+        - DB_DATABASE={{site}}
+        - DB_USERNAME=root
+        - DB_PASSWORD=lerd
+    postgres:
+      detect:
+        - key: DB_CONNECTION
+          value_prefix: pgsql
+      vars:
+        - DB_CONNECTION=pgsql
+        - DB_HOST=lerd-postgres
+        - DB_PORT=5432
+        - DB_DATABASE={{site}}
+        - DB_USERNAME=postgres
+        - DB_PASSWORD=lerd
+    redis:
+      detect:
+        - key: REDIS_HOST
+        - key: CACHE_DRIVER
+          value_prefix: redis
+        - key: SESSION_DRIVER
+          value_prefix: redis
+        - key: QUEUE_CONNECTION
+          value_prefix: redis
+      vars:
+        - REDIS_HOST=lerd-redis
+        - REDIS_PORT=6379
+        - REDIS_PASSWORD=
+    meilisearch:
+      detect:
+        - key: SCOUT_DRIVER
+          value_prefix: meilisearch
+      vars:
+        - MEILISEARCH_HOST=http://lerd-meilisearch:7700
+        - MEILISEARCH_NO_ANALYTICS=true
+    rustfs:
+      detect:
+        - key: FILESYSTEM_DISK
+          value_prefix: s3
+        - key: AWS_ENDPOINT
+      vars:
+        - AWS_ACCESS_KEY_ID=lerd
+        - AWS_SECRET_ACCESS_KEY=lerdpassword
+        - AWS_BUCKET={{site}}
+        - AWS_ENDPOINT=http://lerd-rustfs:9000
+        - AWS_URL=http://localhost:9000/{{site}}
+        - AWS_USE_PATH_STYLE_ENDPOINT=true
+    mailpit:
+      detect:
+        - key: MAIL_HOST
+      vars:
+        - MAIL_MAILER=smtp
+        - MAIL_HOST=lerd-mailpit
+        - MAIL_PORT=1025
+        - MAIL_USERNAME=null
+        - MAIL_PASSWORD=null
+        - MAIL_ENCRYPTION=null
+
+composer: auto
+npm: auto
+console: artisan
+
+workers:
+  queue:
+    label: Queue Worker
+    command: php artisan queue:work --queue=default --tries=3 --timeout=60
+    tune_command: php artisan queue:work --queue={queue} --tries={tries} --timeout={timeout}
+    restart_command: php artisan queue:restart
+    restart: always
+    exclude_check:
+      composer: laravel/horizon
+  schedule:
+    label: Task Scheduler
+    command: php artisan schedule:run
+    schedule: minutely
+  horizon:
+    label: Horizon
+    command: php artisan horizon
+    reload_command: php artisan horizon:listen
+    restart: always
+    check:
+      composer: laravel/horizon
+    conflicts_with:
+      - queue
+
+logs:
+  - path: storage/logs/*.log
+    format: monolog
+
+setup:
+  - label: php artisan storage:link
+    command: php artisan storage:link
+    default: true
+  - label: php artisan migrate
+    command: php artisan migrate
+    default: true
+  - label: php artisan db:seed
+    command: php artisan db:seed
+    default: false
+tinker:
+  command: ["artisan", "tinker"]
+  execute_flag: "--execute"
+  requires_package: laravel/tinker
+  requires_file: artisan
+
+commands:
+  - name: optimize:clear
+    label: Clear all caches
+    command: php artisan optimize:clear
+    description: Clear config, route, view, event, and compiled caches
+    output: silent
+    icon: broom
+  - name: migrate
+    label: Run migrations
+    command: php artisan migrate --force
+    description: Apply pending database migrations
+    output: silent
+    icon: database
+  - name: migrate:fresh
+    label: Drop and re-migrate
+    command: php artisan migrate:fresh --seed --force
+    description: Wipe the database, re-run all migrations, then seed
+    output: silent
+    confirm: true
+    icon: refresh
+  - name: key:generate
+    label: Generate APP_KEY
+    command: php artisan key:generate
+    description: Set the application encryption key in .env
+    output: silent
+    icon: key
+  - name: storage:link
+    label: Link storage
+    command: php artisan storage:link
+    description: Create the public/storage symlink to storage/app/public
+    output: silent
+    icon: link
+
+doctor:
+  checks:
+    - name: app_debug
+      type: env_combo
+      when:
+        APP_ENV: production
+      warn_if:
+        APP_DEBUG: "true"
+      detail: "APP_DEBUG is on while APP_ENV=production, so stack traces and config will leak. Turn debug off."
+    - name: storage_link
+      type: symlink
+      link: public/storage
+      target: storage/app/public
+      requires_dir: public
+      fix: storage:link
+      detail: "public/storage symlink is missing, so files on the public disk won't be web-accessible."
+    - name: migrations
+      type: command
+      command: php artisan migrate:status
+      fail_if_output_contains: Pending
+      fail_if_error_contains: Migration table not found
+      unknown_on_error: true
+      fix: migrate
+      detail: "There are pending migrations, run migrate to apply them."
