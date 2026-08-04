@@ -97,12 +97,17 @@ commands:
   # command rather than a setup step.
   - name: site:install
     label: Install site
+    # The connection is read out of the .env lerd wrote rather than templated
+    # in: {{…}} placeholders are only expanded from lerd v1.29, and an older
+    # install would take them literally and install a whole site into a
+    # database named "{{site}}". Sourcing .env also picks up whichever engine
+    # the project uses, since DB_DRIVER already holds drush's scheme name.
     command: >
+      set -a; . ./.env; set +a;
       php vendor/drush/drush/drush.php site:install --yes
-      --db-url=mysql://root:lerd@lerd-mysql:3306/{{site}}
-      --site-name={{domain}}
+      --db-url="$DB_DRIVER://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
       --account-name=admin --account-pass=lerdadmin1
-    description: Install a fresh site against lerd's mysql, admin user admin/lerdadmin1
+    description: Install a fresh site against the database lerd provisioned, admin user admin/lerdadmin1
     output: text
     confirm: true
     icon: play
@@ -118,7 +123,9 @@ commands:
       composer: drush/drush
   - name: uli
     label: Login as admin
-    command: php vendor/drush/drush/drush.php uli --uri={{scheme}}://{{domain}}
+    command: >
+      set -a; . ./.env; set +a;
+      php vendor/drush/drush/drush.php uli --uri="$APP_URL"
     description: Generate a one-time admin login URL
     output: url
     icon: key
