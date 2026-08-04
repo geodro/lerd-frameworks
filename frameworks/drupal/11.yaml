@@ -59,6 +59,7 @@ env:
 
 composer: auto
 npm: false
+console: vendor/drush/drush/drush.php
 
 workers:
   cron:
@@ -69,10 +70,6 @@ workers:
       composer: drush/drush
 
 setup:
-  - label: Install site
-    command: php vendor/drush/drush/drush.php site:install --yes
-    check:
-      composer: drush/drush
   - label: Run database updates
     command: php vendor/drush/drush/drush.php updatedb --yes
     default: true
@@ -95,34 +92,60 @@ tinker:
   requires_file: vendor/drush/drush/drush.php
 
 commands:
+  # site:install drops and recreates the schema, and `lerd setup --all` runs
+  # every setup step regardless of `default`, so this is a confirm-gated
+  # command rather than a setup step.
+  - name: site:install
+    label: Install site
+    command: >
+      php vendor/drush/drush/drush.php site:install --yes
+      --db-url=mysql://root:lerd@lerd-mysql:3306/{{site}}
+      --site-name={{domain}}
+      --account-name=admin --account-pass=lerdadmin1
+    description: Install a fresh site against lerd's mysql, admin user admin/lerdadmin1
+    output: text
+    confirm: true
+    icon: play
+    check:
+      composer: drush/drush
   - name: cr
     label: Rebuild cache
-    command: drush cr
+    command: php vendor/drush/drush/drush.php cr
     description: Rebuild all Drupal caches
     output: silent
     icon: broom
+    check:
+      composer: drush/drush
   - name: uli
     label: Login as admin
-    command: drush uli
+    command: php vendor/drush/drush/drush.php uli --uri={{scheme}}://{{domain}}
     description: Generate a one-time admin login URL
     output: url
     icon: key
+    check:
+      composer: drush/drush
   - name: updb
     label: Run database updates
-    command: drush updb -y
+    command: php vendor/drush/drush/drush.php updb -y
     description: Apply pending hook_update_N updates
     output: silent
     icon: database
+    check:
+      composer: drush/drush
   - name: cex
     label: Export config
-    command: drush cex -y
+    command: php vendor/drush/drush/drush.php cex -y
     description: Export configuration to the sync directory
     output: text
     icon: arrow-up
+    check:
+      composer: drush/drush
   - name: cim
     label: Import config
-    command: drush cim -y
+    command: php vendor/drush/drush/drush.php cim -y
     description: Import configuration from the sync directory
     output: text
     confirm: true
     icon: arrow-down
+    check:
+      composer: drush/drush

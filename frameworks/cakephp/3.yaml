@@ -15,7 +15,7 @@ env:
   file: config/.env
   example_file: config/.env.example
   format: dotenv
-  url_key: APP_URL
+  url_key: none
   services:
     mysql:
       detect:
@@ -43,7 +43,7 @@ env:
 
 composer: auto
 npm: auto
-console: bin/cake
+console: bin/cake.php
 
 logs:
   - path: logs/*.log
