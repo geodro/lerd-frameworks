@@ -43,7 +43,7 @@ env:
 
 composer: auto
 npm: auto
-console: bin/cake
+console: bin/cake.php
 
 logs:
   - path: logs/*.log
