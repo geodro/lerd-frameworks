@@ -15,7 +15,7 @@ env:
   file: config/.env
   example_file: config/.env.example
   format: dotenv
-  url_key: none
+  url_key: APP_URL
   services:
     mysql:
       detect:
