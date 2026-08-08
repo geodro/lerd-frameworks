@@ -152,3 +152,9 @@ commands:
 
 doctor:
   migrate_command: updb
+
+notifications:
+  # The entity, config and cache layers issue the repeats during an ordinary
+  # request, so the warning names a loop inside the framework rather than
+  # anything a site's own code does.
+  nplusone: false

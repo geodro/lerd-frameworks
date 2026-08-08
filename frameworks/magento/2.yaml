@@ -261,3 +261,9 @@ doctor:
       severity: warn
       fix: deploy:mode:developer
       detail: "The store is in production mode, so template changes need a static content deploy to show up. Switch to developer mode."
+
+notifications:
+  # The entity, config and cache layers issue the repeats during an ordinary
+  # request, so the warning names a loop inside the framework rather than
+  # anything a site's own code does.
+  nplusone: false

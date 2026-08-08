@@ -58,3 +58,9 @@ commands:
     description: Dump the database to a SQL file in the project directory
     output: text
     icon: database
+
+notifications:
+  # The entity, config and cache layers issue the repeats during an ordinary
+  # request, so the warning names a loop inside the framework rather than
+  # anything a site's own code does.
+  nplusone: false
