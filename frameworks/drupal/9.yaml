@@ -13,8 +13,15 @@ detect:
   - composer: drupal/core
 
 env:
-  file: web/sites/default/settings.php
-  format: php-vars
+  # A binary older than the php-vars format reads these three and behaves as it
+  # always has, writing constants into settings.php that Drupal ignores.
+  file: .env
+  format: dotenv
+  fallback_file: web/sites/default/settings.php
+  fallback_format: php-const
+  # A binary that knows the field writes the array Drupal actually reads.
+  app_file: web/sites/default/settings.php
+  app_format: php-vars
   url_key: none
   services:
     mysql:
