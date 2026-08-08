@@ -66,6 +66,9 @@ env:
 composer: auto
 npm: auto
 console: bin/console
+# Run after a connection change: the compiled container is built
+# against the old database and answers every request with an error.
+cache_command: cache:clear
 
 workers:
   messenger:

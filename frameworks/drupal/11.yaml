@@ -7,6 +7,8 @@ create: composer create-project drupal/recommended-project
 php:
   min: "8.3"
   max: "8.5"
+  cli_ini:
+    memory_limit: 512M
 
 detect:
   - composer: drupal/core-recommended
@@ -53,6 +55,9 @@ env:
 composer: auto
 npm: false
 console: vendor/drush/drush/drush.php
+# Run after a connection change: the compiled container is built
+# against the old database and answers every request with an error.
+cache_command: cr
 
 workers:
   cron:
