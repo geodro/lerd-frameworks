@@ -91,6 +91,9 @@ env:
 composer: auto
 npm: auto
 console: artisan
+# Run after a connection change: the compiled container is built
+# against the old database and answers every request with an error.
+cache_command: optimize:clear
 
 workers:
   queue:
@@ -190,6 +193,7 @@ commands:
     icon: link
 
 doctor:
+  migrate_command: migrate
   checks:
     - name: app_debug
       type: env_combo

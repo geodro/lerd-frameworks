@@ -104,3 +104,6 @@ commands:
     command: php tempest cache:clear --force
     output: silent
     icon: broom
+
+doctor:
+  migrate_command: migrate

@@ -65,6 +65,9 @@ requires:
 composer: auto
 npm: false
 console: bin/magento
+# Run after a connection change: the compiled container is built
+# against the old database and answers every request with an error.
+cache_command: cache:flush
 
 # A worktree gets its own base_url in env.php, which changes the config hash
 # Magento stores in the database and refuses to serve without re-importing. That
@@ -261,3 +264,9 @@ doctor:
       severity: warn
       fix: deploy:mode:developer
       detail: "The store is in production mode, so template changes need a static content deploy to show up. Switch to developer mode."
+
+notifications:
+  # The entity, config and cache layers issue the repeats during an ordinary
+  # request, so the warning names a loop inside the framework rather than
+  # anything a site's own code does.
+  nplusone: false
