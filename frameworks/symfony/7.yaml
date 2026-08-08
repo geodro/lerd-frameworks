@@ -23,6 +23,12 @@ env:
   # given "11.8" is read as MySQL). Left out, Doctrine asks the server and is right
   # for every database and version.
   services:
+    sqlite:
+      detect:
+        - key: DATABASE_URL
+          value_prefix: "sqlite://"
+      vars:
+        - DATABASE_URL=sqlite:///%kernel.project_dir%/var/data.db
     mysql:
       detect:
         - key: DATABASE_URL

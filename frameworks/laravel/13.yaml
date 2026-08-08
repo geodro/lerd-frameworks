@@ -21,6 +21,13 @@ env:
     command: key:generate
     fallback_prefix: "base64:"
   services:
+    sqlite:
+      detect:
+        - key: DB_CONNECTION
+          value_prefix: sqlite
+      vars:
+        - DB_CONNECTION=sqlite
+        - DB_DATABASE=database/database.sqlite
     mysql:
       detect:
         - key: DB_CONNECTION
