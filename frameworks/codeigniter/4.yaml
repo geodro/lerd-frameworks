@@ -132,3 +132,6 @@ commands:
     icon: trash
     check:
       composer: codeigniter4/queue
+
+doctor:
+  migrate_command: migrate

@@ -169,6 +169,7 @@ commands:
     icon: link
 
 doctor:
+  migrate_command: migrate
   checks:
     - name: app_debug
       type: env_combo

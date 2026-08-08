@@ -128,6 +128,7 @@ commands:
       composer: doctrine/doctrine-fixtures-bundle
 
 doctor:
+  migrate_command: doctrine:migrations:migrate
   checks:
     - name: app_debug
       type: env_combo

@@ -89,3 +89,6 @@ commands:
     description: Drop the cached database schema
     output: silent
     icon: refresh
+
+doctor:
+  migrate_command: migrate

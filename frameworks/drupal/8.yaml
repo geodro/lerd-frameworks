@@ -13,50 +13,32 @@ detect:
   - composer: drupal/core
 
 env:
-  file: .env
-  format: dotenv
-  fallback_file: web/sites/default/settings.php
-  fallback_format: php-const
+  file: web/sites/default/settings.php
+  format: php-vars
+  url_key: none
   services:
     mysql:
       detect:
-        - key: DB_DRIVER
-          value_prefix: mysql
-        - key: database
+        - key: databases.default.default.driver
           value_prefix: mysql
       vars:
-        - DB_DRIVER=mysql
-        - DB_HOST=lerd-mysql
-        - DB_PORT=3306
-        - DB_NAME={{site}}
-        - DB_USER=root
-        - DB_PASSWORD=lerd
+        - databases.default.default.driver=mysql
+        - databases.default.default.host=lerd-mysql
+        - databases.default.default.port=3306
+        - databases.default.default.database={{site}}
+        - databases.default.default.username=root
+        - databases.default.default.password=lerd
     postgres:
       detect:
-        - key: DB_DRIVER
-          value_prefix: pgsql
-        - key: database
+        - key: databases.default.default.driver
           value_prefix: pgsql
       vars:
-        - DB_DRIVER=pgsql
-        - DB_HOST=lerd-postgres
-        - DB_PORT=5432
-        - DB_NAME={{site}}
-        - DB_USER=postgres
-        - DB_PASSWORD=lerd
-    redis:
-      detect:
-        - key: REDIS_HOST
-      vars:
-        - REDIS_HOST=lerd-redis
-        - REDIS_PORT=6379
-    mailpit:
-      detect:
-        - key: SMTP_HOST
-      vars:
-        - SMTP_HOST=lerd-mailpit
-        - SMTP_PORT=1025
-
+        - databases.default.default.driver=pgsql
+        - databases.default.default.host=lerd-postgres
+        - databases.default.default.port=5432
+        - databases.default.default.database={{site}}
+        - databases.default.default.username=postgres
+        - databases.default.default.password=lerd
 composer: auto
 npm: false
 console: vendor/drush/drush/drush.php
@@ -156,3 +138,6 @@ commands:
     icon: arrow-down
     check:
       composer: drush/drush
+
+doctor:
+  migrate_command: updb
