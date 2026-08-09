@@ -1,0 +1,66 @@
+name: wordpress
+version: "7"
+label: WordPress
+public_dir: .
+php:
+  min: "7.4"
+  max: "8.5"
+
+detect:
+  - file: wp-login.php
+    version_file: wp-includes/version.php
+    version_pattern: "\\$wp_version\\s*=\\s*'([^']+)'"
+  - file: wp-config.php
+
+env:
+  fallback_file: wp-config.php
+  fallback_format: php-const
+  url_key: WP_HOME
+  services:
+    mysql:
+      detect:
+        - key: DB_HOST
+      vars:
+        - DB_NAME={{site}}
+        - DB_USER=root
+        - DB_PASSWORD=lerd
+        - DB_HOST=lerd-mysql
+
+logs:
+  - path: wp-content/debug.log
+    format: raw
+
+composer: false
+npm: false
+
+tinker:
+  command: ["vendor/bin/wp", "eval"]
+  execute_positional: true
+  requires_package: wp-cli/wp-cli
+  requires_file: vendor/bin/wp
+
+commands:
+  - name: cache:flush
+    label: Flush cache
+    command: wp cache flush
+    description: Flush the WordPress object cache
+    output: silent
+    icon: broom
+  - name: rewrite:flush
+    label: Flush rewrites
+    command: wp rewrite flush
+    description: Regenerate permalink rules
+    output: silent
+    icon: refresh
+  - name: db:export
+    label: Export database
+    command: wp db export
+    description: Dump the database to a SQL file in the project directory
+    output: text
+    icon: database
+
+notifications:
+  # The entity, config and cache layers issue the repeats during an ordinary
+  # request, so the warning names a loop inside the framework rather than
+  # anything a site's own code does.
+  nplusone: false
