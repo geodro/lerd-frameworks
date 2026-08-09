@@ -15,32 +15,52 @@ env:
   file: config/.env
   example_file: config/.env.example
   format: dotenv
-  url_key: APP_FULL_BASE_URL
+  # CakePHP's skeleton ships the dotenv loader in config/bootstrap.php commented
+  # out, and josegonzalez/dotenv only as a suggestion, so config/.env is not read
+  # unless the developer opts in. app_local.php is what the application always
+  # reads, and where its own installer puts the connection.
+  app_file: config/app_local.php
+  app_format: php-array
+  url_key: App.fullBaseUrl
   services:
     mysql:
       detect:
-        - key: DATABASE_URL
-          value_prefix: "mysql://"
+        - key: Datasources.default.driver
+          value_prefix: "Cake\\Database\\Driver\\Mysql"
       vars:
-        - "DATABASE_URL=mysql://root:lerd@lerd-mysql:3306/{{site}}"
+        - "Datasources.default.driver=Cake\\Database\\Driver\\Mysql"
+        - "Datasources.default.host=lerd-mysql"
+        - "Datasources.default.port=3306"
+        - "Datasources.default.username=root"
+        - "Datasources.default.password=lerd"
+        - "Datasources.default.database={{site}}"
     postgres:
       detect:
-        - key: DATABASE_URL
-          value_prefix: "postgres://"
+        - key: Datasources.default.driver
+          value_prefix: "Cake\\Database\\Driver\\Postgres"
       vars:
-        - "DATABASE_URL=postgres://postgres:lerd@lerd-postgres:5432/{{site}}"
+        - "Datasources.default.driver=Cake\\Database\\Driver\\Postgres"
+        - "Datasources.default.host=lerd-postgres"
+        - "Datasources.default.port=5432"
+        - "Datasources.default.username=postgres"
+        - "Datasources.default.password=lerd"
+        - "Datasources.default.database={{site}}"
     redis:
       detect:
-        - key: CACHE_URL
-          value_prefix: "redis://"
+        - key: Cache.default.className
+          value_prefix: "Cake\\Cache\\Engine\\RedisEngine"
       vars:
-        - "CACHE_URL=redis://lerd-redis:6379"
+        - "Cache.default.className=Cake\\Cache\\Engine\\RedisEngine"
+        - "Cache.default.host=lerd-redis"
+        - "Cache.default.port=6379"
     mailpit:
       detect:
-        - key: EMAIL_TRANSPORT_DEFAULT_URL
+        - key: EmailTransport.default.host
+          value_prefix: "lerd-mailpit"
       vars:
-        - "EMAIL_TRANSPORT_DEFAULT_URL=smtp://lerd-mailpit:1025"
-
+        - "EmailTransport.default.className=Cake\\Mailer\\Transport\\SmtpTransport"
+        - "EmailTransport.default.host=lerd-mailpit"
+        - "EmailTransport.default.port=1025"
 composer: auto
 npm: auto
 console: bin/cake.php
