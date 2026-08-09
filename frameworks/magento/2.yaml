@@ -131,9 +131,24 @@ logs:
   - path: var/log/*.log
     format: monolog
 
-# Every step below needs an installed store. app/etc/config.php is the marker:
-# setup:install writes it, and lerd's env wiring never does, unlike env.php.
+# app/etc/config.php is the marker of an installed store: setup:install writes
+# it, and lerd's env wiring never does, unlike env.php. Every step below needs
+# one, so they wait for it, and the install step waits for its absence.
 setup:
+  - label: Install the store (schema, admin user, base URL)
+    command: >
+      php bin/magento setup:install
+      --base-url={{scheme}}://{{domain}}/
+      --db-host=lerd-mysql --db-name={{site}} --db-user=root --db-password=lerd
+      --search-engine=opensearch --opensearch-host=lerd-opensearch --opensearch-port=9200
+      --admin-firstname=Lerd --admin-lastname=Admin --admin-email=admin@{{domain}}
+      --admin-user=admin --admin-password=lerdadmin1
+      --language=en_US --currency=USD --timezone=UTC --use-rewrites=1
+    # Unticked: it creates an admin user and a schema, which is the right call on
+    # a fresh checkout and nobody's default.
+    default: false
+    check:
+      missing_file: app/etc/config.php
   - label: Apply schema and data updates
     command: php bin/magento setup:upgrade
     default: true
@@ -159,8 +174,8 @@ setup:
 
 commands:
   # Magento 2.4 removed the web installer, so a fresh store is installed from the
-  # CLI. Confirm-gated rather than a setup step: it creates schema and an admin
-  # user, and `lerd setup --all` runs every setup step regardless of default.
+  # CLI. Offered on an uninstalled store only: run against a working one it drops
+  # the schema and takes the store's data with it.
   - name: setup:install
     label: Install Magento
     command: >
@@ -175,6 +190,8 @@ commands:
     output: text
     confirm: true
     icon: play
+    check:
+      missing_file: app/etc/config.php
   - name: cache:flush
     label: Flush cache
     command: php bin/magento cache:flush
