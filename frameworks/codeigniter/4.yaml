@@ -1,6 +1,7 @@
 name: codeigniter
 version: "4"
 label: CodeIgniter
+color: "#ef4223"
 public_dir: public
 create: composer create-project codeigniter4/appstarter
 php:
