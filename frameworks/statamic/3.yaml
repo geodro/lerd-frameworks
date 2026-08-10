@@ -1,6 +1,7 @@
 name: statamic
 version: "3"
 label: Statamic
+color: "#ff269e"
 public_dir: public
 create: composer create-project statamic/statamic
 php:

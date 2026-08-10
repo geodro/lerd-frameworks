@@ -63,8 +63,9 @@ New frameworks and version bumps are welcome — this store is only as good as t
 
 1. Fork this repo
 2. Add or update `frameworks/<name>/<version>.yaml`
-3. Add or update the entry in `frameworks/index.json` (name, label, versions, latest, detect rules)
-4. Open a pull request
+3. Optionally add the framework's own mark as `frameworks/<name>.svg` (see below)
+4. Add or update the entry in `frameworks/index.json` (name, label, versions, latest, detect rules)
+5. Open a pull request
 
 ### Definition schema
 
@@ -74,6 +75,7 @@ Every definition declares a `version` matching the major release it targets, plu
 name: myframework
 version: "7"
 label: My Framework
+color: "#4a90d9"
 public_dir: public
 detect:
   - composer: myvendor/myframework
@@ -88,6 +90,33 @@ setup:
 doctor:
   # declarative health checks
 ```
+
+### The framework's own mark
+
+A framework used to be a text label everywhere lerd showed it. It can now carry
+its logo: add `frameworks/<name>.svg` beside the versioned directory, and declare
+a `color:` in the YAML for the tint lerd paints it in.
+
+The mark is per family, not per version, so one file serves every release and it
+sits next to `<name>/` rather than inside it. The colour lives in the YAML, which
+only exists per version, so repeat the same `color:` in each version file.
+
+It is **monochrome**: one silhouette of filled paths with no `fill`, `stroke`,
+`style` or `class` of its own, in a bare `<svg viewBox="...">`. lerd strips
+everything but the geometry on the way in, along with script, `foreignObject`,
+event handlers and external references, then paints it in the declared colour.
+Not a full colour logo, and not a wordmark, which is unreadable at the size this
+renders. Take the mark, not the lockup.
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="…"/></svg>
+```
+
+`color:` must be a plain hex literal, `#ff2d20` or `#abc`; anything else is
+dropped and the framework renders as its label alone. A framework with a colour
+but no mark still gets the tint. The marks currently in this repo come from
+[Simple Icons](https://simpleicons.org), which is CC0, except Magento's, which
+comes from the project's own repo.
 
 See the [frameworks documentation](https://lerd.sh/usage/frameworks) for the full schema reference and every available field.
 

@@ -1,6 +1,7 @@
 name: wordpress
 version: "7"
 label: WordPress
+color: "#21759b"
 public_dir: .
 php:
   min: "7.4"

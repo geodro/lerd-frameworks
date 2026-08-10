@@ -1,6 +1,7 @@
 name: drupal
 version: "8"
 label: Drupal
+color: "#0678be"
 public_dir: web
 favicon: core/misc/favicon.ico
 create: composer create-project drupal/recommended-project

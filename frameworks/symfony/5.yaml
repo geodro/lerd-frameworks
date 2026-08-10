@@ -1,6 +1,7 @@
 name: symfony
 version: "5"
 label: Symfony
+color: "#000000"
 public_dir: public
 create: composer create-project symfony/skeleton
 php:

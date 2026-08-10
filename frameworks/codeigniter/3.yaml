@@ -1,6 +1,7 @@
 name: codeigniter
 version: "3"
 label: CodeIgniter
+color: "#ef4223"
 public_dir: .
 create: composer create-project codeigniter/framework
 

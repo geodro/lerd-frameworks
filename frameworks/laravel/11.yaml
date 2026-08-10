@@ -1,6 +1,7 @@
 name: laravel
 version: "11"
 label: Laravel
+color: "#ff2d20"
 public_dir: public
 create: composer create-project --no-install --no-plugins --no-scripts laravel/laravel
 
