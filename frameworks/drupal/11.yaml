@@ -63,6 +63,7 @@ cache_command: cr
 workers:
   cron:
     label: Cron
+    icon: clock
     command: php vendor/drush/drush/drush.php cron
     restart: always
     check:

@@ -70,10 +70,12 @@ cache_command: optimize:clear
 workers:
   queue:
     label: Queue Worker
+    icon: queue
     command: php artisan queue:work --queue=default --tries=3 --timeout=60
     restart: always
   schedule:
     label: Task Scheduler
+    icon: clock
     command: php artisan schedule:work
     restart: always
 

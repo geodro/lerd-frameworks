@@ -68,12 +68,14 @@ cache_command: cache:clear
 workers:
   messenger:
     label: Messenger
+    icon: queue
     command: php bin/console messenger:consume async --time-limit=3600
     restart: always
     check:
       composer: symfony/messenger
   scheduler:
     label: Scheduler
+    icon: clock
     command: php bin/console messenger:consume scheduler_default --time-limit=3600
     restart: always
     check:

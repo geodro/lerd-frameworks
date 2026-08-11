@@ -72,6 +72,7 @@ cache_command: cache:clear
 workers:
   queue:
     label: Queue Worker
+    icon: queue
     command: php spark queue:work default
     # Parameterized variant for `lerd queue:start --queue/--tries`. CI4 takes the
     # queue name positionally and has no per-job timeout flag, so timeout is omitted.
