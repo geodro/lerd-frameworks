@@ -17,6 +17,13 @@ env:
   example_file: config/.env.example
   format: dotenv
   url_key: APP_URL
+  sqlite:
+    detect:
+      - key: Datasources.default.driver
+        value_prefix: 'Cake\Database\Driver\Sqlite'
+    vars:
+      - 'Datasources.default.driver=Cake\Database\Driver\Sqlite'
+      - Datasources.default.database=database/database.sqlite
   services:
     mysql:
       detect:

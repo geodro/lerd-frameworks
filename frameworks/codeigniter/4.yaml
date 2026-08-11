@@ -23,6 +23,13 @@ env:
     env_key: encryption.key
     command: key:generate
     fallback_prefix: "hex2bin:"
+  sqlite:
+    detect:
+      - key: database.default.DBDriver
+        value_prefix: SQLite3
+    vars:
+      - database.default.DBDriver=SQLite3
+      - database.default.database=database/database.sqlite
   services:
     mysql:
       detect:
