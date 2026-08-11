@@ -119,10 +119,12 @@ nginx:
 workers:
   cron:
     label: Cron
+    icon: clock
     command: php bin/magento cron:run
     schedule: minutely
   consumers:
     label: Queue Consumers
+    icon: queue
     command: php bin/magento queue:consumers:start async.operations.all
     restart: always
     check:

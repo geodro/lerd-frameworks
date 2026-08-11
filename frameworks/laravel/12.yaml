@@ -99,6 +99,7 @@ cache_command: optimize:clear
 workers:
   queue:
     label: Queue Worker
+    icon: queue
     command: php artisan queue:work --queue=default --tries=3 --timeout=60
     tune_command: php artisan queue:work --queue={queue} --tries={tries} --timeout={timeout}
     restart_command: php artisan queue:restart
@@ -107,10 +108,12 @@ workers:
       composer: laravel/horizon
   schedule:
     label: Task Scheduler
+    icon: clock
     command: php artisan schedule:work
     restart: always
   reverb:
     label: Reverb WebSocket
+    icon: broadcast
     command: php artisan reverb:start
     restart: on-failure
     check:
@@ -121,6 +124,8 @@ workers:
       default_port: 8080
   horizon:
     label: Horizon
+    icon: horizon
+    color: "#405263"
     command: php artisan horizon
     reload_command: php artisan horizon:listen
     restart: always
@@ -129,6 +134,8 @@ workers:
     conflicts_with:
       - queue
   vite:
+    icon: vite
+    color: "#9135ff"
     per_worktree: true
     replaces_build: true
     label: Vite

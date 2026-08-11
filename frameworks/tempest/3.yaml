@@ -56,15 +56,19 @@ console: tempest
 workers:
   command_bus:
     label: Async Command Monitor
+    icon: bolt
     command: php tempest command:monitor
     restart: always
     check:
       composer: tempest/command-bus
   schedule:
     label: Task Scheduler
+    icon: clock
     command: php tempest schedule:run
     schedule: minutely
   vite:
+    icon: vite
+    color: "#9135ff"
     per_worktree: true
     replaces_build: true
     label: Vite
