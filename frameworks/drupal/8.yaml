@@ -32,7 +32,7 @@ env:
         value_prefix: sqlite
     vars:
       - databases.default.default.driver=sqlite
-      - databases.default.default.database=database/database.sqlite
+      - databases.default.default.database=sites/default/files/.ht.sqlite
       - 'databases.default.default.namespace=Drupal\sqlite\Driver\Database\sqlite'
       - databases.default.default.autoload=core/modules/sqlite/src/Driver/Database/sqlite/
   services:
