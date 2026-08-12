@@ -19,6 +19,12 @@ env:
   example_file: .env
   format: dotenv
   url_key: DEFAULT_URI
+  sqlite:
+    detect:
+      - key: DATABASE_URL
+        value_prefix: 'sqlite://'
+    vars:
+      - 'DATABASE_URL=sqlite:///%kernel.project_dir%/var/data.db'
   # DATABASE_URL carries no serverVersion: Doctrine picks its platform from that
   # string when it is set, and it cannot be spelled for a drop-in (a MariaDB server
   # given "11.8" is read as MySQL). Left out, Doctrine asks the server and is right

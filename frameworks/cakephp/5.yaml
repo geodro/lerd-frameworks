@@ -23,6 +23,13 @@ env:
   app_file: config/app_local.php
   app_format: php-array
   url_key: App.fullBaseUrl
+  sqlite:
+    detect:
+      - key: Datasources.default.driver
+        value_prefix: 'Cake\Database\Driver\Sqlite'
+    vars:
+      - 'Datasources.default.driver=Cake\Database\Driver\Sqlite'
+      - Datasources.default.database=database/database.sqlite
   services:
     mysql:
       detect:

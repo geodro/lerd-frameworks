@@ -26,6 +26,15 @@ env:
   app_file: web/sites/default/settings.php
   app_format: php-vars
   url_key: none
+  sqlite:
+    detect:
+      - key: databases.default.default.driver
+        value_prefix: sqlite
+    vars:
+      - databases.default.default.driver=sqlite
+      - databases.default.default.database=sites/default/files/.ht.sqlite
+      - 'databases.default.default.namespace=Drupal\sqlite\Driver\Database\sqlite'
+      - databases.default.default.autoload=core/modules/sqlite/src/Driver/Database/sqlite/
   services:
     mysql:
       detect:
