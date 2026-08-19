@@ -100,6 +100,9 @@ nginx:
     }
 
     location /static/ {
+        location ~ ^/static/version\d*/ {
+            rewrite ^/static/version\d*/(.*)$ /static/$1 last;
+        }
         # Deployed files are served directly. Anything else is generated on the
         # fly by pub/static.php, which wants the path with the version signature
         # stripped, handed over as ?resource=.
