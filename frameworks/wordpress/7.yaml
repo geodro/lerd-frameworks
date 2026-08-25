@@ -3,6 +3,7 @@ version: "7"
 label: WordPress
 color: "#21759b"
 public_dir: .
+create: composer create-project --no-install --no-plugins --no-scripts johnpbloch/wordpress-core:^7.0
 php:
   min: "7.4"
   max: "8.5"
@@ -16,6 +17,9 @@ detect:
 env:
   fallback_file: wp-config.php
   fallback_format: php-const
+  app_file: wp-config.php
+  app_format: php-const
+  example_file: wp-config-sample.php
   url_key: WP_HOME
   services:
     mysql:
