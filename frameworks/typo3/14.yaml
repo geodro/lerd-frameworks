@@ -50,7 +50,7 @@ env:
       vars:
         - MAIL.transport=smtp
         - MAIL.transport_smtp_server=lerd-mailpit:1025
-        - MAIL.transport_smtp_encrypt=""
+        - MAIL.transport_smtp_encrypt=
         - MAIL.defaultMailFromAddress=lerd@{{domain}}
         - MAIL.defaultMailFromName={{site}}
   sqlite:
