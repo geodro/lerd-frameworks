@@ -1,0 +1,144 @@
+name: typo3
+version: "12"
+label: TYPO3
+color: "#ff8700"
+public_dir: public
+create: composer create-project typo3/cms-base-distribution
+php:
+  min: "8.1"
+  max: "8.3"
+
+detect:
+  - composer: typo3/cms-core
+  - file: public/typo3
+
+env:
+  file: .env
+  format: dotenv
+  app_file: config/system/settings.php
+  app_format: php-array
+  url_key: none
+  services:
+    mysql:
+      detect:
+        - key: DB.Connections.Default.driver
+          value_prefix: pdo_mysql
+        - key: DB.Connections.Default.driver
+          value_prefix: mysqli
+      vars:
+        - DB.Connections.Default.driver=pdo_mysql
+        - DB.Connections.Default.host=lerd-mysql
+        - DB.Connections.Default.port=3306
+        - DB.Connections.Default.dbname={{site}}
+        - DB.Connections.Default.user=root
+        - DB.Connections.Default.password=lerd
+        - DB.Connections.Default.charset=utf8mb4
+    postgres:
+      detect:
+        - key: DB.Connections.Default.driver
+          value_prefix: pdo_pgsql
+      vars:
+        - DB.Connections.Default.driver=pdo_pgsql
+        - DB.Connections.Default.host=lerd-postgres
+        - DB.Connections.Default.port=5432
+        - DB.Connections.Default.dbname={{site}}
+        - DB.Connections.Default.user=postgres
+        - DB.Connections.Default.password=lerd
+    mailpit:
+      detect:
+        - key: MAIL.transport_smtp_server
+      vars:
+        - MAIL.transport=smtp
+        - MAIL.transport_smtp_server=lerd-mailpit:1025
+        - MAIL.transport_smtp_encrypt=""
+        - MAIL.defaultMailFromAddress=lerd@{{domain}}
+        - MAIL.defaultMailFromName={{site}}
+  sqlite:
+    detect:
+      - key: DB.Connections.Default.driver
+        value_prefix: pdo_sqlite
+    vars:
+      - DB.Connections.Default.driver=pdo_sqlite
+      - DB.Connections.Default.path=var/sqlite/typo3.sqlite
+
+composer: auto
+npm: false
+console: vendor/bin/typo3
+cache_command: cache:flush
+
+workers:
+  scheduler:
+    label: Scheduler
+    icon: clock
+    command: php vendor/bin/typo3 scheduler:run
+    schedule: minutely
+    check:
+      composer: typo3/cms-scheduler
+
+setup:
+  - label: Set up extensions
+    command: php vendor/bin/typo3 extension:setup
+    default: true
+  - label: Run upgrade wizards
+    command: php vendor/bin/typo3 upgrade:run
+  - label: Flush caches
+    command: php vendor/bin/typo3 cache:flush
+    default: true
+
+commands:
+  - name: setup
+    label: Install site
+    command: >
+      php vendor/bin/typo3 setup --no-interaction --force
+      --driver=pdoMysql
+      --host=lerd-mysql
+      --port=3306
+      --dbname={{site}}
+      --username=root
+      --password=lerd
+      --admin-username=admin
+      --admin-user-password='Lerd.Admin.1234'
+      --admin-email=admin@{{domain}}
+      --project-name='{{site}}'
+      --create-site='{{scheme}}://{{domain}}/'
+      --server-type=other
+    description: Install TYPO3 against the database lerd provisioned, admin user admin/Lerd.Admin.1234
+    output: text
+    confirm: true
+    icon: play
+  - name: flush
+    label: Flush caches
+    command: php vendor/bin/typo3 cache:flush
+    description: Flush all TYPO3 caches
+    output: silent
+    icon: broom
+  - name: warmup
+    label: Warm caches
+    command: php vendor/bin/typo3 cache:warmup
+    description: Warm up all TYPO3 caches
+    output: silent
+    icon: refresh
+  - name: extension-setup
+    label: Set up extensions
+    command: php vendor/bin/typo3 extension:setup
+    description: Run the database schema and static data setup for all extensions
+    output: text
+    icon: database
+  - name: upgrade
+    label: Run upgrade wizards
+    command: php vendor/bin/typo3 upgrade:run
+    description: Run all pending TYPO3 upgrade wizards
+    output: text
+    confirm: true
+    icon: arrow-up
+  - name: scheduler
+    label: Run scheduler
+    command: php vendor/bin/typo3 scheduler:run
+    description: Execute all scheduler tasks that are due
+    output: text
+    icon: list
+    check:
+      composer: typo3/cms-scheduler
+
+doctor:
+  migrate_command: extension-setup

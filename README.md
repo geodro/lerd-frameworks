@@ -34,6 +34,7 @@ All of it is data. None of it ships in the binary.
 | Symfony | 8, 7 | `symfony.lock` file or `symfony/framework-bundle` in composer.json |
 | WordPress | 7, 6, 5 | `wp-login.php` file or `wp-config.php` file |
 | Drupal | 11, 10 | `drupal/core-recommended` or `drupal/core` in composer.json |
+| TYPO3 | 14, 13, 12, 11, 10 | `typo3/cms-core` in composer.json or `public/typo3` directory |
 | CakePHP | 5, 4 | `bin/cake` file or `cakephp/cakephp` in composer.json |
 | CodeIgniter | 4 | `spark` file or `codeigniter4/framework` in composer.json |
 | Statamic | 6, 5 | `statamic/cms` in composer.json |
