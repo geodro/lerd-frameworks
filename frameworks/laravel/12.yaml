@@ -311,7 +311,7 @@ doctor:
       detail: "There are pending migrations, run migrate to apply them."
     - name: nativephp_runtime
       type: command
-      command: test -x vendor/nativephp/electron/resources/js/resources/php/php && test -d vendor/nativephp/electron/resources/js/node_modules/electron
+      command: test ! -d vendor/nativephp/electron || { test -x vendor/nativephp/electron/resources/js/resources/php/php && test -d vendor/nativephp/electron/resources/js/node_modules/electron; }
       severity: warn
       check:
         composer: nativephp/electron
@@ -319,7 +319,7 @@ doctor:
       detail: "NativePHP is installed but its desktop runtime is missing on this machine, so native:serve cannot start. Install the NativePHP runtime."
     - name: nativephp_mobile_runtime
       type: command
-      command: test -x vendor/nativephp/php-bin/bin/host/php
+      command: test ! -d vendor/nativephp/mobile || test -x vendor/nativephp/php-bin/bin/host/php
       severity: warn
       check:
         composer: nativephp/mobile
@@ -327,7 +327,7 @@ doctor:
       detail: "NativePHP for Mobile is installed but the host PHP it drives the toolchain with is missing, so native:run and native:jump cannot start. Install the NativePHP runtime."
     - name: nativephp_mobile_toolchain
       type: command
-      command: '{ test "$(uname -s)" = Darwin && xcrun --find xcodebuild >/dev/null 2>&1; } || test -d "${ANDROID_HOME:-$HOME/Library/Android/sdk}" || test -d "$HOME/Android/Sdk"'
+      command: 'test ! -d vendor/nativephp/mobile || { test "$(uname -s)" = Darwin && xcrun --find xcodebuild >/dev/null 2>&1; } || test -d "${ANDROID_HOME:-$HOME/Library/Android/sdk}" || test -d "$HOME/Android/Sdk"'
       severity: warn
       check:
         composer: nativephp/mobile
@@ -335,6 +335,7 @@ doctor:
     - name: nativephp_android_jdk
       type: command
       command: |
+        test -d vendor/nativephp/mobile || exit 0
         test -d "${ANDROID_HOME:-$HOME/Library/Android/sdk}" || test -d "$HOME/Android/Sdk" || exit 0
         java="${JAVA_HOME:+$JAVA_HOME/bin/}java"
         command -v "$java" >/dev/null 2>&1 || exit 1
