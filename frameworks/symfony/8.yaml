@@ -86,6 +86,17 @@ workers:
     restart: always
     check:
       composer: symfony/scheduler
+  vite:
+    icon: vite
+    color: "#9135ff"
+    per_worktree: true
+    replaces_build: true
+    label: Vite
+    command: npm run dev
+    restart: on-failure
+    host: true
+    check:
+      file: node_modules/vite
 
 logs:
   - path: var/log/*.log
