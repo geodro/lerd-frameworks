@@ -154,6 +154,25 @@ workers:
     health:
       url_file: public/hot
 
+  native:
+    label: NativePHP
+    icon: nativephp
+    color: "#4f46e5"
+    command: vendor/nativephp/electron/resources/js/resources/php/php artisan native:serve --no-dependencies --no-interaction
+    restart: on-failure
+    host: true
+    check:
+      composer: nativephp/electron
+  jump:
+    label: NativePHP Jump
+    icon: nativephp
+    color: "#4f46e5"
+    command: vendor/nativephp/php-bin/bin/host/php artisan native:jump
+    restart: on-failure
+    host: true
+    check:
+      composer: nativephp/mobile
+
 logs:
   - path: storage/logs/*.log
     format: monolog
@@ -207,6 +226,64 @@ commands:
     output: silent
     icon: link
 
+  - name: native:install
+    label: Install NativePHP runtime
+    command: >-
+      npm --prefix vendor/nativephp/electron/resources/js install &&
+      NATIVEPHP_PHP_BINARY_PATH="$PWD/vendor/nativephp/php-bin/bin/"
+      NATIVEPHP_PHP_BINARY_VERSION="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+      node vendor/nativephp/electron/resources/js/php.js &&
+      vendor/nativephp/electron/resources/js/resources/php/php artisan native:install --force --no-interaction
+    description: Install Electron and the matching desktop PHP binary, then publish the NativePHP scaffolding
+    output: text
+    icon: arrow-down
+    check:
+      composer: nativephp/electron
+  - name: native:build
+    label: Build desktop app
+    command: vendor/nativephp/electron/resources/js/resources/php/php artisan native:build
+    description: Package the app as a desktop binary for the chosen platform
+    output: terminal
+    icon: play
+    check:
+      composer: nativephp/electron
+  - name: native:install
+    label: Install NativePHP runtime
+    command: |
+      set -e
+      composer require --dev nativephp/php-bin --no-interaction
+      version="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+      os=mac; arch=arm64
+      case "$(uname -s)" in Linux) os=linux; arch=x64 ;; esac
+      case "$(uname -m)" in x86_64|amd64) arch=x64 ;; esac
+      dir=vendor/nativephp/php-bin/bin/host
+      mkdir -p "$dir"
+      unzip -o -j "vendor/nativephp/php-bin/bin/$os/$arch/php-$version.zip" -d "$dir"
+      chmod +x "$dir/php"
+      "$dir/php" artisan native:install
+    description: Add the desktop PHP binary this machine needs to drive the mobile toolchain, then install the NativePHP platform resources
+    output: terminal
+    icon: arrow-down
+    confirm: true
+    check:
+      composer: nativephp/mobile
+  - name: native:run
+    label: Run on device
+    command: vendor/nativephp/php-bin/bin/host/php artisan native:run
+    description: Build the app and launch it on a simulator, emulator or connected device
+    output: terminal
+    icon: play
+    check:
+      composer: nativephp/mobile
+  - name: native:open
+    label: Open native project
+    command: vendor/nativephp/php-bin/bin/host/php artisan native:open
+    description: Open the generated Xcode or Android Studio project
+    output: terminal
+    icon: edit
+    check:
+      composer: nativephp/mobile
+
 doctor:
   migrate_command: migrate
   checks:
@@ -232,3 +309,38 @@ doctor:
       unknown_on_error: true
       fix: migrate
       detail: "There are pending migrations, run migrate to apply them."
+    - name: nativephp_runtime
+      type: command
+      command: test -x vendor/nativephp/electron/resources/js/resources/php/php && test -d vendor/nativephp/electron/resources/js/node_modules/electron
+      severity: warn
+      check:
+        composer: nativephp/electron
+      fix: native:install
+      detail: "NativePHP is installed but its desktop runtime is missing on this machine, so native:serve cannot start. Install the NativePHP runtime."
+    - name: nativephp_mobile_runtime
+      type: command
+      command: test -x vendor/nativephp/php-bin/bin/host/php
+      severity: warn
+      check:
+        composer: nativephp/mobile
+      fix: native:install
+      detail: "NativePHP for Mobile is installed but the host PHP it drives the toolchain with is missing, so native:run and native:jump cannot start. Install the NativePHP runtime."
+    - name: nativephp_mobile_toolchain
+      type: command
+      command: '{ test "$(uname -s)" = Darwin && xcrun --find xcodebuild >/dev/null 2>&1; } || test -d "${ANDROID_HOME:-$HOME/Library/Android/sdk}" || test -d "$HOME/Android/Sdk"'
+      severity: warn
+      check:
+        composer: nativephp/mobile
+      detail: "No mobile toolchain found. iOS builds need Xcode, Android builds need the Android SDK."
+    - name: nativephp_android_jdk
+      type: command
+      command: |
+        test -d "${ANDROID_HOME:-$HOME/Library/Android/sdk}" || test -d "$HOME/Android/Sdk" || exit 0
+        java="${JAVA_HOME:+$JAVA_HOME/bin/}java"
+        command -v "$java" >/dev/null 2>&1 || exit 1
+        major=$("$java" -version 2>&1 | head -1 | sed -n 's/.*version "\([0-9][0-9]*\).*/\1/p')
+        test "${major:-0}" -ge 17
+      severity: warn
+      check:
+        composer: nativephp/mobile
+      detail: "The Android SDK is here but the JDK Gradle would use is older than 17, so native:run android fails. Point JAVA_HOME at a newer JDK, for example the one Android Studio bundles."
