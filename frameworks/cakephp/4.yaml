@@ -76,6 +76,19 @@ console: bin/cake.php
 # against the old database and answers every request with an error.
 cache_command: cache clear_all
 
+workers:
+  vite:
+    icon: vite
+    color: "#9135ff"
+    per_worktree: true
+    replaces_build: true
+    label: Vite
+    command: npm run dev
+    restart: on-failure
+    host: true
+    check:
+      file: node_modules/vite
+
 logs:
   - path: logs/*.log
     format: raw

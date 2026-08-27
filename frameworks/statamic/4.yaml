@@ -85,6 +85,19 @@ workers:
     icon: clock
     command: php artisan schedule:work
     restart: always
+  vite:
+    icon: vite
+    color: "#9135ff"
+    per_worktree: true
+    replaces_build: true
+    label: Vite
+    command: npm run dev
+    restart: on-failure
+    host: true
+    check:
+      file: node_modules/vite
+    health:
+      url_file: public/hot
 
 logs:
   - path: storage/logs/*.log
