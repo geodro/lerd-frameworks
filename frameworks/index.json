@@ -41,6 +41,16 @@
       ]
     },
     {
+      "name": "typo3",
+      "label": "TYPO3",
+      "versions": ["14", "13", "12", "11", "10"],
+      "latest": "14",
+      "detect": [
+        {"composer": "typo3/cms-core"},
+        {"file": "public/typo3"}
+      ]
+    },
+    {
       "name": "cakephp",
       "label": "CakePHP",
       "versions": ["5", "4"],
