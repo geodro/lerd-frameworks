@@ -131,7 +131,13 @@ workers:
     check:
       composer: laravel/reverb
     proxy:
+      # path stays for binaries older than multi-path support; paths wins where
+      # both are read. Reverb serves the WebSocket on /app and the HTTP
+      # broadcasting API on /apps, on the same port.
       path: /app
+      paths:
+        - /app
+        - /apps
       port_env_key: REVERB_SERVER_PORT
       default_port: 8080
   horizon:
