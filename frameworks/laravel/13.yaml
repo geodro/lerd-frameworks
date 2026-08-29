@@ -161,17 +161,10 @@ workers:
     command: vendor/nativephp/electron/resources/js/resources/php/php artisan native:serve --no-dependencies --no-interaction
     restart: on-failure
     host: true
+    # The runtime rather than the package: before native:install the binary this
+    # command names is not there, and a worker offered then can only fail.
     check:
-      composer: nativephp/electron
-  jump:
-    label: NativePHP Jump
-    icon: nativephp
-    color: "#4f46e5"
-    command: vendor/nativephp/php-bin/bin/host/php artisan native:jump
-    restart: on-failure
-    host: true
-    check:
-      composer: nativephp/mobile
+      file: vendor/nativephp/electron/resources/js/resources/php/php
 
 logs:
   - path: storage/logs/*.log
@@ -267,6 +260,14 @@ commands:
     confirm: true
     check:
       composer: nativephp/mobile
+  - name: native:jump
+    label: Jump (test on a device)
+    command: vendor/nativephp/php-bin/bin/host/php artisan native:jump
+    description: Serve the app to a phone on your network and draw the QR code to scan
+    output: terminal
+    icon: play
+    check:
+      file: vendor/nativephp/php-bin/bin/host/php
   - name: native:run
     label: Run on device
     command: vendor/nativephp/php-bin/bin/host/php artisan native:run
@@ -274,7 +275,7 @@ commands:
     output: terminal
     icon: play
     check:
-      composer: nativephp/mobile
+      file: vendor/nativephp/php-bin/bin/host/php
   - name: native:open
     label: Open native project
     command: vendor/nativephp/php-bin/bin/host/php artisan native:open
@@ -282,7 +283,7 @@ commands:
     output: terminal
     icon: edit
     check:
-      composer: nativephp/mobile
+      file: vendor/nativephp/php-bin/bin/host/php
 
 doctor:
   migrate_command: migrate
