@@ -244,7 +244,7 @@ commands:
     output: terminal
     icon: play
     check:
-      composer: nativephp/electron
+      file: vendor/nativephp/electron/resources/js/resources/php/php
   - name: native:install
     label: Install NativePHP runtime
     command: |
