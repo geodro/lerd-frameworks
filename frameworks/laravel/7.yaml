@@ -3,7 +3,7 @@ version: "7"
 label: Laravel
 color: "#ff2d20"
 public_dir: public
-create: composer create-project --no-install --no-plugins --no-scripts laravel/laravel
+create: composer create-project --no-install --no-plugins --no-scripts laravel/laravel:^7.0
 
 php:
   min: "7.2"

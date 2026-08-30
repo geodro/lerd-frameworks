@@ -3,7 +3,7 @@ version: "3"
 label: CodeIgniter
 color: "#ef4223"
 public_dir: .
-create: composer create-project codeigniter/framework
+create: composer create-project codeigniter/framework:^3.0
 
 php:
   min: "7.2"

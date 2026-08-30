@@ -3,7 +3,7 @@ version: "2"
 label: Magento
 color: "#e85d22"
 public_dir: pub
-create: composer create-project --repository-url=https://mirror.mage-os.org/ magento/project-community-edition
+create: composer create-project --repository-url=https://mirror.mage-os.org/ magento/project-community-edition:^2.0
 php:
   min: "8.1"
   max: "8.5"

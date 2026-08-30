@@ -4,7 +4,7 @@ label: Drupal
 color: "#0678be"
 public_dir: web
 favicon: core/misc/favicon.ico
-create: composer create-project drupal/recommended-project
+create: composer create-project drupal/recommended-project:^11.0
 php:
   min: "8.3"
   max: "8.5"
