@@ -1,0 +1,12 @@
+package: cakephp/migrations
+frameworks:
+  - name: cakephp
+    min: "3"
+
+commands:
+  - name: migrate
+    label: Run migrations
+    command: bin/cake migrations migrate
+    description: Apply pending migrations
+    output: silent
+    icon: database

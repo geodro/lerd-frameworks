@@ -1,0 +1,77 @@
+package: nativephp/mobile
+frameworks:
+  - name: laravel
+    min: "11"
+
+commands:
+  # Named apart from the desktop installer on purpose: a project with both
+  # packages carries both commands, and two entries called native:install are
+  # one command in a dropdown and a coin toss on the CLI.
+  - name: native:install-mobile
+    label: Install NativePHP mobile runtime
+    command: |
+      set -e
+      composer require --dev nativephp/php-bin --no-interaction
+      version="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+      os=mac; arch=arm64
+      case "$(uname -s)" in Linux) os=linux; arch=x64 ;; esac
+      case "$(uname -m)" in x86_64|amd64) arch=x64 ;; esac
+      dir=vendor/nativephp/php-bin/bin/host
+      mkdir -p "$dir"
+      unzip -o -j "vendor/nativephp/php-bin/bin/$os/$arch/php-$version.zip" -d "$dir"
+      chmod +x "$dir/php"
+      "$dir/php" artisan native:install
+    description: Add the desktop PHP binary this machine needs to drive the mobile toolchain, then install the NativePHP platform resources
+    output: terminal
+    icon: arrow-down
+    confirm: true
+  - name: native:jump
+    label: Jump (test on a device)
+    command: vendor/nativephp/php-bin/bin/host/php artisan native:jump
+    description: Serve the app to a phone on your network and draw the QR code to scan
+    output: terminal
+    icon: play
+    check:
+      file: vendor/nativephp/php-bin/bin/host/php
+  - name: native:run
+    label: Run on device
+    command: vendor/nativephp/php-bin/bin/host/php artisan native:run
+    description: Build the app and launch it on a simulator, emulator or connected device
+    output: terminal
+    icon: play
+    pinned: true
+    check:
+      file: vendor/nativephp/php-bin/bin/host/php
+  - name: native:open
+    label: Open native project
+    command: vendor/nativephp/php-bin/bin/host/php artisan native:open
+    description: Open the generated Xcode or Android Studio project
+    output: terminal
+    icon: edit
+    check:
+      file: vendor/nativephp/php-bin/bin/host/php
+
+doctor:
+  checks:
+    - name: nativephp_mobile_runtime
+      type: command
+      command: test ! -d vendor/nativephp/mobile || test -x vendor/nativephp/php-bin/bin/host/php
+      severity: warn
+      fix: native:install-mobile
+      detail: "NativePHP for Mobile is installed but the host PHP it drives the toolchain with is missing, so native:run and native:jump cannot start. Install the NativePHP runtime."
+    - name: nativephp_mobile_toolchain
+      type: command
+      command: 'test ! -d vendor/nativephp/mobile || { test "$(uname -s)" = Darwin && xcrun --find xcodebuild >/dev/null 2>&1; } || test -d "${ANDROID_HOME:-$HOME/Library/Android/sdk}" || test -d "$HOME/Android/Sdk"'
+      severity: warn
+      detail: "No mobile toolchain found. iOS builds need Xcode, Android builds need the Android SDK."
+    - name: nativephp_android_jdk
+      type: command
+      command: |
+        test -d vendor/nativephp/mobile || exit 0
+        test -d "${ANDROID_HOME:-$HOME/Library/Android/sdk}" || test -d "$HOME/Android/Sdk" || exit 0
+        java="${JAVA_HOME:+$JAVA_HOME/bin/}java"
+        command -v "$java" >/dev/null 2>&1 || exit 1
+        major=$("$java" -version 2>&1 | head -1 | sed -n 's/.*version "\([0-9][0-9]*\).*/\1/p')
+        test "${major:-0}" -ge 17
+      severity: warn
+      detail: "The Android SDK is here but the JDK Gradle would use is older than 17, so native:run android fails. Point JAVA_HOME at a newer JDK, for example the one Android Studio bundles."

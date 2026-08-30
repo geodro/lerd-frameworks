@@ -1,0 +1,17 @@
+package: doctrine/doctrine-fixtures-bundle
+frameworks:
+  - name: symfony
+    min: "4"
+
+commands:
+  - name: doctrine:fixtures:load
+    label: Load fixtures
+    command: bin/console doctrine:fixtures:load --no-interaction
+    description: Wipe data and load fixtures
+    output: silent
+    confirm: true
+    icon: refresh
+
+setup:
+  - label: Load fixtures
+    command: php bin/console doctrine:fixtures:load --no-interaction

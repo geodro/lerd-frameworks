@@ -1,0 +1,17 @@
+package: doctrine/doctrine-migrations-bundle
+frameworks:
+  - name: symfony
+    min: "4"
+
+commands:
+  - name: doctrine:migrations:migrate
+    label: Run migrations
+    command: bin/console doctrine:migrations:migrate --no-interaction
+    description: Apply pending Doctrine migrations
+    output: silent
+    icon: database
+
+setup:
+  - label: Run migrations
+    command: php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+    default: true

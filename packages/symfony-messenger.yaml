@@ -1,0 +1,11 @@
+package: symfony/messenger
+frameworks:
+  - name: symfony
+    min: "4"
+
+workers:
+  messenger:
+    label: Messenger
+    icon: queue
+    command: php bin/console messenger:consume async --time-limit=3600
+    restart: always

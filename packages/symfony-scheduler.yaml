@@ -1,0 +1,11 @@
+package: symfony/scheduler
+frameworks:
+  - name: symfony
+    min: "8"
+
+workers:
+  scheduler:
+    label: Scheduler
+    icon: clock
+    command: php bin/console messenger:consume scheduler_default --time-limit=3600
+    restart: always

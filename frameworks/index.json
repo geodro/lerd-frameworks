@@ -100,5 +100,23 @@
         {"file": "tempest"}
       ]
     }
+  ],
+  "packages": [
+    {"name": "cakephp/migrations"},
+    {"name": "cakephp/queue"},
+    {"name": "codeigniter4/queue"},
+    {"name": "doctrine/doctrine-fixtures-bundle"},
+    {"name": "doctrine/doctrine-migrations-bundle"},
+    {"name": "drush/drush"},
+    {"name": "helhum/typo3-console"},
+    {"name": "laravel/horizon"},
+    {"name": "laravel/reverb"},
+    {"name": "nativephp/electron"},
+    {"name": "nativephp/mobile"},
+    {"name": "symfony/messenger"},
+    {"name": "symfony/scheduler"},
+    {"name": "tempest/command-bus"},
+    {"name": "tempest/database"},
+    {"name": "typo3/cms-scheduler"}
   ]
 }

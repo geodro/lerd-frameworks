@@ -1,0 +1,21 @@
+package: laravel/reverb
+frameworks:
+  - name: laravel
+    min: "11"
+
+workers:
+  reverb:
+    label: Reverb WebSocket
+    icon: broadcast
+    command: php artisan reverb:start
+    restart: on-failure
+    proxy:
+      # path stays for binaries older than multi-path support; paths wins where
+      # both are read. Reverb serves the WebSocket on /app and the HTTP
+      # broadcasting API on /apps, on the same port.
+      path: /app
+      paths:
+        - /app
+        - /apps
+      port_env_key: REVERB_SERVER_PORT
+      default_port: 8080

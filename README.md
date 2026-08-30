@@ -63,9 +63,9 @@ Installed definitions auto-refresh every 24 hours, so improvements landed here r
 New frameworks and version bumps are welcome — this store is only as good as the community around it.
 
 1. Fork this repo
-2. Add or update `frameworks/<name>/<version>.yaml`
+2. Add or update `frameworks/<name>/<version>.yaml`, or `packages/<vendor>-<name>.yaml` for something a composer package owns (see below)
 3. Optionally add the framework's own mark as `frameworks/<name>.svg` (see below)
-4. Add or update the entry in `frameworks/index.json` (name, label, versions, latest, detect rules)
+4. Add or update the entry in `frameworks/index.json` (name, label, versions, latest, detect rules), and list a new package under `packages`
 5. Open a pull request
 
 ### Definition schema
@@ -91,6 +91,65 @@ setup:
 doctor:
   # declarative health checks
 ```
+
+### Package definitions
+
+Most workers and commands are not really the framework's. A Horizon worker belongs
+to `laravel/horizon`, a fixtures command to `doctrine/doctrine-fixtures-bundle`,
+and written into the version files each one has to be repeated in every major of
+every framework that can carry the package, then corrected in all of them at once.
+
+A package declares them once, as `packages/<vendor>-<name>.yaml`, a sibling of the
+`frameworks/` directory since a package is not a version of a framework, with the
+composer name written as one file name:
+
+```yaml
+package: laravel/horizon
+frameworks:                 # optional: which frameworks, and which of their majors
+  - name: laravel
+    min: "6"                # inclusive, as is max:, and either may be omitted
+workers:                    # same shape as a definition's own
+commands:
+setup:
+doctor:
+```
+
+Workers, commands, setup steps and doctor checks are the whole schema; env
+wiring, detection and services stay with the framework. Lerd merges the package
+onto the resolved definition when the project requires it in its `composer.json`
+and the framework falls inside the range, an empty `frameworks:` list meaning
+every framework. The package wins a name collision with the version file, which
+is what lets an entry move here without being shadowed by the copy it left
+behind. List the package under `packages` in `frameworks/index.json` as
+`{"name": "vendor/package"}`, which is where lerd reads the set from; a file
+nothing lists is never fetched.
+
+When a major of the package itself changes what lerd runs, give that major its
+own file, `<vendor>-<name>@<major>.yaml`, and list the majors in the index entry
+(`{"name": "drush/drush", "versions": ["13", "11"], "latest": "13"}`). A
+versioned file serves its own major and every later one until the next versioned
+file, and the unversioned file serves everything below the first of them, so
+adding a major is adding one file and no project is moved onto a definition
+written for a version it does not have. Keep the unversioned file: it is what
+older projects are served.
+
+Each file is the whole answer for the versions it serves, not a patch on the one
+before it. What a major *removes* has to be said out loud, since the copy the
+declaration was lifted out of is still in the framework's version files and
+silence there means keep it:
+
+```yaml
+removes:
+  commands: [horizon:snapshot]
+  workers: [horizon-metrics]
+  setup: ["Publish Horizon assets"]   # a setup step by its label
+  doctor: [horizon_supervisor]
+```
+
+The copies a package was lifted out of stay in the version files that already
+shipped them: an install whose binary predates the package layer still reads
+those, and deleting them would take the worker away from it. The package file is
+the one that is maintained from here, since it is the one lerd prefers.
 
 ### The framework's own mark
 
