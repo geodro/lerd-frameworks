@@ -285,6 +285,7 @@ commands:
     description: Build the app and launch it on a simulator, emulator or connected device
     output: terminal
     icon: play
+    pinned: true
     check:
       file: vendor/nativephp/php-bin/bin/host/php
   - name: native:open
