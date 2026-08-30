@@ -3,7 +3,7 @@ version: "12"
 label: TYPO3
 color: "#ff8700"
 public_dir: public
-create: composer create-project typo3/cms-base-distribution
+create: composer create-project typo3/cms-base-distribution:^12.0
 php:
   min: "8.1"
   max: "8.3"

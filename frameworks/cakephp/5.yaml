@@ -3,7 +3,7 @@ version: "5"
 label: CakePHP
 color: "#d33c43"
 public_dir: webroot
-create: composer create-project cakephp/app
+create: composer create-project cakephp/app:^5.0
 php:
   min: "8.1"
   max: "8.4"

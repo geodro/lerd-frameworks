@@ -3,7 +3,7 @@ version: "3"
 label: Tempest
 color: "#29ABE2"
 public_dir: public
-create: composer create-project tempest/app
+create: composer create-project tempest/app:^3.0
 
 php:
   min: "8.5"

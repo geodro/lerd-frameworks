@@ -3,7 +3,7 @@ version: "10"
 label: Laravel
 color: "#ff2d20"
 public_dir: public
-create: composer create-project --no-install --no-plugins --no-scripts laravel/laravel
+create: composer create-project --no-install --no-plugins --no-scripts laravel/laravel:^10.0
 
 php:
   min: "8.1"

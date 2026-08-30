@@ -3,7 +3,7 @@ version: "5"
 label: Statamic
 color: "#ff269e"
 public_dir: public
-create: composer create-project statamic/statamic
+create: composer create-project statamic/statamic:^5.0
 php:
   min: "8.2"
   max: "8.4"

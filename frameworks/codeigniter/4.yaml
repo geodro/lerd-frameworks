@@ -3,7 +3,7 @@ version: "4"
 label: CodeIgniter
 color: "#ef4223"
 public_dir: public
-create: composer create-project codeigniter4/appstarter
+create: composer create-project codeigniter4/appstarter:^4.0
 php:
   min: "8.2"
   max: "8.4"

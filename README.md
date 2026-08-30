@@ -107,6 +107,7 @@ version: "7"
 label: My Framework
 color: "#4a90d9"
 public_dir: public
+create: composer create-project myvendor/myapp:^7.0
 detect:
   - composer: myvendor/myframework
 php:
@@ -120,6 +121,12 @@ setup:
 doctor:
   # declarative health checks
 ```
+
+The `create` command is what `lerd new` hands to composer, and it has to name the
+major the file is for. `lerd new` asks which major to scaffold and resolves this
+definition from the answer, so a command that leaves the package unconstrained
+installs the newest release whatever was picked, and the project on disk ends up
+a major the definition was never written for.
 
 ### Package definitions
 
