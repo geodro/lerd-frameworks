@@ -43,6 +43,35 @@ All of it is data. None of it ships in the binary.
 
 Don't see yours? [Add it](#contributing) — that's what this repo is for.
 
+## Available packages
+
+Some of what a project needs is not the framework's at all: a Horizon worker
+belongs to `laravel/horizon`, not to Laravel 12. Those declarations live in
+`packages/`, one file per composer package, and Lerd merges them into whatever
+definition your project resolved when its `composer.json` requires the package.
+
+| Package | What it adds | Applies to |
+|---------|--------------|------------|
+| `cakephp/migrations` | `migrate` command | CakePHP 3+ |
+| `cakephp/queue` | `queue` worker | CakePHP 5+ |
+| `codeigniter4/queue` | `queue` worker, `queue:retry`, `queue:failed`, `queue:flush` commands | CodeIgniter 4+ |
+| `doctrine/doctrine-fixtures-bundle` | `doctrine:fixtures:load` command, 1 setup step | Symfony 4+ |
+| `doctrine/doctrine-migrations-bundle` | `doctrine:migrations:migrate` command, 1 setup step | Symfony 4+ |
+| `drush/drush` | `cron` worker, `site:install`, `cr`, `uli`, `updb`, `cex`, `cim` commands, 3 setup steps | Drupal 8+ |
+| `helhum/typo3-console` | `setup` command | TYPO3 10-11 |
+| `laravel/horizon` | `horizon` worker | Laravel 6+ |
+| `laravel/reverb` | `reverb` worker | Laravel 11+ |
+| `nativephp/electron` | `native` worker, `native:install`, `native:build` commands, 1 doctor check | Laravel 11+ |
+| `nativephp/mobile` | `native:install-mobile`, `native:jump`, `native:run`, `native:open` commands, 3 doctor checks | Laravel 11+ |
+| `symfony/messenger` | `messenger` worker | Symfony 4+ |
+| `symfony/scheduler` | `scheduler` worker | Symfony 8+ |
+| `tempest/command-bus` | `command_bus` worker | Tempest 3+ |
+| `tempest/database` | 1 setup step | Tempest 3+ |
+| `typo3/cms-scheduler` | `scheduler` worker, `scheduler` command | TYPO3 10+ |
+
+Missing one you use? [Add it](#package-definitions) — a package file is a dozen
+lines, and it reaches every install within 24 hours like anything else here.
+
 ## Usage
 
 You rarely touch the store directly: link a project and Lerd offers to install the matching definition for you. When you want to manage it by hand:
