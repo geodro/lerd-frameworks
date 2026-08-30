@@ -1,0 +1,15 @@
+package: laravel/horizon
+frameworks:
+  - name: laravel
+    min: "6"
+
+workers:
+  horizon:
+    label: Horizon
+    icon: horizon
+    color: "#405263"
+    command: php artisan horizon
+    reload_command: php artisan horizon:listen
+    restart: always
+    conflicts_with:
+      - queue

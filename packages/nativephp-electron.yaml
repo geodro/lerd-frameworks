@@ -1,0 +1,47 @@
+package: nativephp/electron
+frameworks:
+  - name: laravel
+    min: "11"
+
+workers:
+  native:
+    label: NativePHP
+    icon: nativephp
+    color: "#4f46e5"
+    command: vendor/nativephp/electron/resources/js/resources/php/php artisan native:serve --no-dependencies --no-interaction
+    restart: on-failure
+    host: true
+    # The runtime rather than the package: before native:install the binary this
+    # command names is not there, and a worker offered then can only fail.
+    check:
+      file: vendor/nativephp/electron/resources/js/resources/php/php
+
+commands:
+  - name: native:install
+    label: Install NativePHP runtime
+    command: >-
+      npm --prefix vendor/nativephp/electron/resources/js install &&
+      NATIVEPHP_PHP_BINARY_PATH="$PWD/vendor/nativephp/php-bin/bin/"
+      NATIVEPHP_PHP_BINARY_VERSION="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+      node vendor/nativephp/electron/resources/js/php.js &&
+      vendor/nativephp/electron/resources/js/resources/php/php artisan native:install --force --no-interaction
+    description: Install Electron and the matching desktop PHP binary, then publish the NativePHP scaffolding
+    output: text
+    icon: arrow-down
+  - name: native:build
+    label: Build desktop app
+    command: vendor/nativephp/electron/resources/js/resources/php/php artisan native:build
+    description: Package the app as a desktop binary for the chosen platform
+    output: terminal
+    icon: play
+    check:
+      file: vendor/nativephp/electron/resources/js/resources/php/php
+
+doctor:
+  checks:
+    - name: nativephp_runtime
+      type: command
+      command: test ! -d vendor/nativephp/electron || { test -x vendor/nativephp/electron/resources/js/resources/php/php && test -d vendor/nativephp/electron/resources/js/node_modules/electron; }
+      severity: warn
+      fix: native:install
+      detail: "NativePHP is installed but its desktop runtime is missing on this machine, so native:serve cannot start. Install the NativePHP runtime."

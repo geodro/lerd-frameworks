@@ -1,0 +1,19 @@
+package: typo3/cms-scheduler
+frameworks:
+  - name: typo3
+    min: "10"
+
+workers:
+  scheduler:
+    label: Scheduler
+    icon: clock
+    command: php vendor/bin/typo3 scheduler:run
+    schedule: minutely
+
+commands:
+  - name: scheduler
+    label: Run scheduler
+    command: php vendor/bin/typo3 scheduler:run
+    description: Execute all scheduler tasks that are due
+    output: text
+    icon: list

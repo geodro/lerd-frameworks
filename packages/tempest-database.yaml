@@ -1,0 +1,9 @@
+package: tempest/database
+frameworks:
+  - name: tempest
+    min: "3"
+
+setup:
+  - label: Run migrations
+    command: php tempest migrate:up --force
+    default: true

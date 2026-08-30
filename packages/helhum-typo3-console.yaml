@@ -1,0 +1,22 @@
+package: helhum/typo3-console
+frameworks:
+  - name: typo3
+    min: "10"
+    max: "11"
+
+commands:
+  - name: setup
+    label: Install site
+    command: >
+      php vendor/bin/typo3cms install:setup --no-interaction --force
+      --database-driver=mysqli --database-host-name=lerd-mysql
+      --database-port=3306 --database-name={{site}} --database-user-name=root
+      --database-user-password=lerd --use-existing-database
+      --admin-user-name=admin --admin-password='Lerd.Admin.1234'
+      --site-name='{{site}}' --site-setup-type=site
+      --site-base-url='{{scheme}}://{{domain}}/' --web-server-config=none
+    description: Install TYPO3 against the database lerd provisioned, admin user
+      admin/Lerd.Admin.1234
+    output: text
+    confirm: true
+    icon: play

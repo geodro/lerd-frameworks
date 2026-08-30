@@ -1,0 +1,11 @@
+package: tempest/command-bus
+frameworks:
+  - name: tempest
+    min: "3"
+
+workers:
+  command_bus:
+    label: Async Command Monitor
+    icon: bolt
+    command: php tempest command:monitor
+    restart: always

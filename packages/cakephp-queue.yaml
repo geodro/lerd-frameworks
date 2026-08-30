@@ -1,0 +1,11 @@
+package: cakephp/queue
+frameworks:
+  - name: cakephp
+    min: "5"
+
+workers:
+  queue:
+    label: Queue Worker
+    icon: queue
+    command: bin/cake queue worker
+    restart: always
