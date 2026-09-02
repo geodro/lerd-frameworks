@@ -17,11 +17,17 @@ workers:
     check:
       file: vendor/nativephp/desktop/resources/build/php/php
 
-# native:* opens a desktop window, so it cannot run in the FPM container. These
-# say so, and `lerd php artisan native:run` and `lerd artisan native:run` both
-# reach the desktop binary on the host instead of the shim.
+# These open a desktop window, so they cannot run in the FPM container. Saying so
+# is what lets `lerd artisan native:run` and `php artisan native:run` reach the
+# desktop binary on the host rather than lerd's php shim. Listed one by one
+# rather than as native:* because a project can carry the mobile package too,
+# and each file should say what it claims.
 host_commands:
-  - args: "artisan native:*"
+  - args: "artisan native:install"
+    binary: vendor/nativephp/desktop/resources/build/php/php
+  - args: "artisan native:build"
+    binary: vendor/nativephp/desktop/resources/build/php/php
+  - args: "artisan native:run"
     binary: vendor/nativephp/desktop/resources/build/php/php
 
 commands:
