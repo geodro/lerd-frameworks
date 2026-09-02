@@ -3,20 +3,11 @@ frameworks:
   - name: laravel
     min: "11"
 
-# The toolchain these drive lives on the machine, not in the container: native:run
-# shells out to Gradle and adb, or to xcodebuild and simctl. Without this, typing
-# what the NativePHP documentation gives you reaches lerd's php shim and runs
-# where none of that exists. Listed one by one rather than as native:* because a
-# project can carry the desktop package too, and each file should say what it
-# claims. native:run is the one name both packages answer to, upstream included.
+# The toolchain lives on the machine, not in the container: these shell out to
+# Gradle and adb, or to xcodebuild and simctl. The whole namespace, since it is
+# 28 commands and a list of them goes stale the next time upstream adds one.
 host_commands:
-  - args: "artisan native:install-mobile"
-    binary: vendor/nativephp/php-bin/bin/host/php
-  - args: "artisan native:jump"
-    binary: vendor/nativephp/php-bin/bin/host/php
-  - args: "artisan native:open"
-    binary: vendor/nativephp/php-bin/bin/host/php
-  - args: "artisan native:run"
+  - args: "artisan native:*"
     binary: vendor/nativephp/php-bin/bin/host/php
 
 commands:

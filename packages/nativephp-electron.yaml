@@ -19,15 +19,9 @@ workers:
     check:
       file: vendor/nativephp/electron/resources/js/resources/php/php
 
-# These open a desktop window, so they cannot run in the FPM container. Saying so
-# is what lets the commands NativePHP documents reach the bundled binary on the
-# host rather than lerd's php shim.
+# These reach for Electron and a display, which the container has neither of.
 host_commands:
-  - args: "artisan native:install"
-    binary: vendor/nativephp/electron/resources/js/resources/php/php
-  - args: "artisan native:serve"
-    binary: vendor/nativephp/electron/resources/js/resources/php/php
-  - args: "artisan native:build"
+  - args: "artisan native:*"
     binary: vendor/nativephp/electron/resources/js/resources/php/php
 
 commands:
