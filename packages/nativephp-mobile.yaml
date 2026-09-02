@@ -43,11 +43,11 @@ commands:
     confirm: true
   - name: native:jump
     label: Jump (test on a device)
-    # Through lerd rather than the host binary by name, so the extension
-    # requirement above is what decides where this one runs. Named explicitly
-    # rather than as `php`, which resolves through lerd's bin directory and is
-    # one more thing to be on PATH wherever a terminal is spawned.
-    command: lerd artisan native:jump
+    # Through lerd's php rather than the host binary by name, so the extension
+    # requirement above is what decides where this one runs. `php` rather than
+    # `lerd`, because the shim lives in the bin directory lerd puts on PATH for
+    # every command it runs; the lerd binary itself sits elsewhere.
+    command: php artisan native:jump
     description: Serve the app to a phone on your network and draw the QR code to scan
     output: terminal
     icon: play
