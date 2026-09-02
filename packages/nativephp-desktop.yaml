@@ -8,19 +8,33 @@ workers:
     label: NativePHP
     icon: nativephp
     color: "#4f46e5"
-    command: php artisan native:run --no-interaction
+    command: vendor/nativephp/desktop/resources/build/php/php artisan native:run --no-interaction
     restart: on-failure
     host: true
-    # v2 drives Electron through the machine's own PHP rather than a bundled
-    # binary, so the gate is the Electron runtime the installer puts in place.
+    # The desktop PHP binary by path, never a bare `php`: the worker runs on the
+    # host, where `php` is lerd's shim into the FPM container, and native:run
+    # would then look for Electron and a display inside it.
     check:
-      file: vendor/nativephp/desktop/resources/electron/node_modules/electron/dist/electron
+      file: vendor/nativephp/desktop/resources/build/php/php
+
+# native:* opens a desktop window, so it cannot run in the FPM container. These
+# say so, and `lerd php artisan native:run` and `lerd artisan native:run` both
+# reach the desktop binary on the host instead of the shim.
+host_commands:
+  - args: "artisan native:*"
+    binary: vendor/nativephp/desktop/resources/build/php/php
 
 commands:
   - name: native:install
     label: Install NativePHP runtime
-    command: php artisan native:install --no-interaction
-    description: Publish the NativePHP service provider and config, and install the Electron dependencies
+    command: >-
+      npm --prefix vendor/nativephp/desktop/resources/electron install &&
+      NATIVEPHP_PHP_BINARY_PATH="$PWD/vendor/nativephp/php-bin/bin/"
+      NATIVEPHP_PHP_BINARY_VERSION="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+      NATIVEPHP_BUILD_PATH="$PWD/vendor/nativephp/desktop/resources/build"
+      node vendor/nativephp/desktop/resources/electron/php.js &&
+      php artisan native:install --no-interaction
+    description: Install the Electron dependencies and the matching desktop PHP binary, then publish the NativePHP scaffolding
     output: text
     icon: arrow-down
   - name: native:publish
@@ -31,18 +45,18 @@ commands:
     icon: folder
   - name: native:build
     label: Build desktop app
-    command: php artisan native:build
+    command: vendor/nativephp/desktop/resources/build/php/php artisan native:build
     description: Package the app as a desktop binary for the chosen platform
     output: terminal
     icon: play
     check:
-      file: vendor/nativephp/desktop/resources/electron/node_modules/electron/dist/electron
+      file: vendor/nativephp/desktop/resources/build/php/php
 
 doctor:
   checks:
     - name: nativephp_runtime
       type: command
-      command: test ! -d vendor/nativephp/desktop || test -x vendor/nativephp/desktop/resources/electron/node_modules/electron/dist/electron
+      command: test ! -d vendor/nativephp/desktop || { test -x vendor/nativephp/desktop/resources/build/php/php && test -d vendor/nativephp/desktop/resources/electron/node_modules/electron; }
       severity: warn
       fix: native:install
-      detail: "NativePHP is installed but its Electron runtime is missing on this machine, so native:run cannot start. Install the NativePHP runtime."
+      detail: "NativePHP is installed but its desktop runtime is missing on this machine, so native:run cannot start. Install the NativePHP runtime."

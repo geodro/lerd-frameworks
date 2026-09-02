@@ -19,6 +19,13 @@ workers:
     check:
       file: vendor/nativephp/electron/resources/js/resources/php/php
 
+# native:* opens a desktop window, so it cannot run in the FPM container. These
+# say so, and both `lerd php artisan native:...` and `lerd artisan native:...`
+# reach the bundled binary on the host instead of the shim.
+host_commands:
+  - args: "artisan native:*"
+    binary: vendor/nativephp/electron/resources/js/resources/php/php
+
 commands:
   - name: native:install
     label: Install NativePHP runtime
