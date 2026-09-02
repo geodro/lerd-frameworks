@@ -111,6 +111,7 @@
     {"name": "helhum/typo3-console"},
     {"name": "laravel/horizon"},
     {"name": "laravel/reverb"},
+    {"name": "nativephp/desktop"},
     {"name": "nativephp/electron"},
     {"name": "nativephp/mobile"},
     {"name": "symfony/messenger"},
