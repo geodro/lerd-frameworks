@@ -23,6 +23,7 @@ workers:
 host_commands:
   - args: "artisan native:*"
     binary: vendor/nativephp/electron/resources/js/resources/php/php
+    install_command: native:install
 
 commands:
   - name: native:install

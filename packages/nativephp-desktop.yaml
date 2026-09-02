@@ -21,6 +21,7 @@ workers:
 host_commands:
   - args: "artisan native:*"
     binary: vendor/nativephp/desktop/resources/build/php/php
+    install_command: native:install
 
 commands:
   - name: native:install
