@@ -7,6 +7,14 @@ frameworks:
 # Gradle and adb, or to xcodebuild and simctl. The whole namespace, since it is
 # 28 commands and a list of them goes stale the next time upstream adds one.
 host_commands:
+  # Workerman drives Jump's websocket bridge and calls posix and pcntl unguarded,
+  # and neither the Linux nor the macOS php-bin build ships them, so the bridge dies on its first
+  # line and the phone drops the session right after the landing page. Naming the
+  # requirement here is what sends this one command to a PHP that has them.
+  - args: "artisan native:jump"
+    binary: vendor/nativephp/php-bin/bin/host/php
+    install_command: native:install-mobile
+    requires_extensions: [posix, pcntl]
   - args: "artisan native:*"
     binary: vendor/nativephp/php-bin/bin/host/php
     install_command: native:install-mobile
@@ -35,7 +43,11 @@ commands:
     confirm: true
   - name: native:jump
     label: Jump (test on a device)
-    command: vendor/nativephp/php-bin/bin/host/php artisan native:jump
+    # Through lerd rather than the host binary by name, so the extension
+    # requirement above is what decides where this one runs. Named explicitly
+    # rather than as `php`, which resolves through lerd's bin directory and is
+    # one more thing to be on PATH wherever a terminal is spawned.
+    command: lerd artisan native:jump
     description: Serve the app to a phone on your network and draw the QR code to scan
     output: terminal
     icon: play
