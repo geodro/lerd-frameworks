@@ -79,6 +79,17 @@ doctor:
       severity: warn
       fix: native:install-mobile
       detail: "NativePHP for Mobile is installed but the host PHP it drives the toolchain with is missing, so native:run and native:jump cannot start. Install the NativePHP runtime."
+    - name: nativephp_mobile_runtime_version
+      type: command
+      command: |
+        test -d vendor/nativephp/mobile || exit 0
+        test -x vendor/nativephp/php-bin/bin/host/php || exit 0
+        want="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+        have="$(vendor/nativephp/php-bin/bin/host/php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+        test "$want" = "$have"
+      severity: warn
+      fix: native:install-mobile
+      detail: "The NativePHP runtime on this machine is a different PHP version than the site runs, which is what changing the site's PHP version leaves behind. NativePHP refuses to build against a binary that disagrees with composer.lock. Reinstall the runtime."
     - name: nativephp_mobile_toolchain
       type: command
       command: 'test ! -d vendor/nativephp/mobile || { test "$(uname -s)" = Darwin && xcrun --find xcodebuild >/dev/null 2>&1; } || test -d "${ANDROID_HOME:-$HOME/Library/Android/sdk}" || test -d "$HOME/Android/Sdk"'
