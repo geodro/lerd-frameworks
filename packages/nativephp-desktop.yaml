@@ -11,23 +11,15 @@ workers:
     command: vendor/nativephp/desktop/resources/build/php/php artisan native:run --no-interaction
     restart: on-failure
     host: true
-    # The desktop PHP binary by path, never a bare `php`: the worker runs on the
-    # host, where `php` is lerd's shim into the FPM container, and native:run
-    # would then look for Electron and a display inside it.
+    # Named by path, never a bare `php`: on the host that is lerd's shim back
+    # into the container, where there is no Electron and no display.
     check:
       file: vendor/nativephp/desktop/resources/build/php/php
 
-# These open a desktop window, so they cannot run in the FPM container. Saying so
-# is what lets `lerd artisan native:run` and `php artisan native:run` reach the
-# desktop binary on the host rather than lerd's php shim. Listed one by one
-# rather than as native:* because a project can carry the mobile package too,
-# and each file should say what it claims.
+# These reach for Electron and a display, which the container has neither of.
+# The whole namespace, so a command upstream adds later needs no edit here.
 host_commands:
-  - args: "artisan native:install"
-    binary: vendor/nativephp/desktop/resources/build/php/php
-  - args: "artisan native:build"
-    binary: vendor/nativephp/desktop/resources/build/php/php
-  - args: "artisan native:run"
+  - args: "artisan native:*"
     binary: vendor/nativephp/desktop/resources/build/php/php
 
 commands:
