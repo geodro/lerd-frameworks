@@ -2,6 +2,9 @@ package: nativephp/electron
 frameworks:
   - name: laravel
     min: "11"
+    # The repository is archived and its last release caps at illuminate ^12, so
+    # a Laravel 13 project is served by nativephp/desktop instead.
+    max: "12"
 
 workers:
   native:

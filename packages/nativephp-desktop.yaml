@@ -1,0 +1,48 @@
+package: nativephp/desktop
+frameworks:
+  - name: laravel
+    min: "11"
+
+workers:
+  native:
+    label: NativePHP
+    icon: nativephp
+    color: "#4f46e5"
+    command: php artisan native:run --no-interaction
+    restart: on-failure
+    host: true
+    # v2 drives Electron through the machine's own PHP rather than a bundled
+    # binary, so the gate is the Electron runtime the installer puts in place.
+    check:
+      file: vendor/nativephp/desktop/resources/electron/node_modules/electron/dist/electron
+
+commands:
+  - name: native:install
+    label: Install NativePHP runtime
+    command: php artisan native:install --no-interaction
+    description: Publish the NativePHP service provider and config, and install the Electron dependencies
+    output: text
+    icon: arrow-down
+  - name: native:publish
+    label: Publish the Electron project
+    command: php artisan native:install --publish --no-interaction
+    description: Export the Electron project to nativephp/electron in the project root for full control over the runtime
+    output: text
+    icon: folder
+  - name: native:build
+    label: Build desktop app
+    command: php artisan native:build
+    description: Package the app as a desktop binary for the chosen platform
+    output: terminal
+    icon: play
+    check:
+      file: vendor/nativephp/desktop/resources/electron/node_modules/electron/dist/electron
+
+doctor:
+  checks:
+    - name: nativephp_runtime
+      type: command
+      command: test ! -d vendor/nativephp/desktop || test -x vendor/nativephp/desktop/resources/electron/node_modules/electron/dist/electron
+      severity: warn
+      fix: native:install
+      detail: "NativePHP is installed but its Electron runtime is missing on this machine, so native:run cannot start. Install the NativePHP runtime."
