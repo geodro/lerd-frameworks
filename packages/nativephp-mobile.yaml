@@ -9,6 +9,7 @@ frameworks:
 host_commands:
   - args: "artisan native:*"
     binary: vendor/nativephp/php-bin/bin/host/php
+    install_command: native:install-mobile
 
 commands:
   # Named apart from the desktop installer on purpose: a project with both
